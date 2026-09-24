@@ -1,0 +1,17 @@
+# Card metadata consumed by https://amishchadha.com
+name: StepClimber
+slug: stepclimber
+area: Mobility and Logistics
+status: concept          # concept | design | prototype | tested | released
+shortlisted: false
+pitch: >-
+  Motor-assisted hand truck on tri-star wheel clusters that climb stairs one step at a time, with a tilt sensor that holds the load angle steady.
+problem: >-
+  Last-mile couriers carry heavy parcels up stairs to walk-up apartments by hand, which causes injuries and slows deliveries.
+budget_usd: 600
+difficulty: 3  # 1 easiest, 5 hardest
+hero_image: media/hero.png
+licenses:
+  hardware: CERN-OHL-S-2.0
+  software: MIT
+tags: [mobility-and-logistics, open-hardware, cern-ohl-s]
