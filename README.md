@@ -1,14 +1,14 @@
 # StepClimber
 
-![TRL 2](https://img.shields.io/badge/TRL-2%20of%209-0F766E) ![Hardware: CERN-OHL-S-2.0](https://img.shields.io/badge/hardware-CERN--OHL--S--2.0-111827) ![Software: MIT](https://img.shields.io/badge/software-MIT-111827)
+![TRL 3](https://img.shields.io/badge/TRL-3%20of%209-0F766E) ![Hardware: CERN-OHL-S-2.0](https://img.shields.io/badge/hardware-CERN--OHL--S--2.0-111827) ![Software: MIT](https://img.shields.io/badge/software-MIT-111827)
 
-**Area:** Mobility and Logistics · **TRL:** 2 of 9 (concept formulated) · **Prototype budget:** about $600 USD · **Difficulty:** 3 of 5
+**Area:** Mobility and Logistics · **TRL:** 3 of 9 (proof of concept on paper) · **Prototype budget:** about $600 USD · **Difficulty:** 3 of 5
 
-Motor-assisted hand truck on tri-star wheel clusters that climb stairs one step at a time, with a tilt sensor that holds the load angle steady.
+Motor-assisted hand truck on tri-star wheel clusters that climb stairs one step at a time, with a tilt sensor that helps the courier hold the load angle steady.
 
 ![StepClimber concept](media/hero.png)
 
-[Interactive 3D model](media/viewer.html) · [Concept blueprint (PDF)](media/concept-blueprint.pdf) · [Review note](docs/REVIEW.md)
+[Interactive 3D model](media/viewer.html) · [Concept blueprint (PDF)](media/concept-blueprint.pdf) · [General arrangement (PDF)](cad/drawings/SCM-DWG-001.pdf) · [Sizing calculations](docs/04-calcs/01-sizing.md) · [Review note](docs/REVIEW.md)
 
 ## Problem
 
@@ -16,7 +16,7 @@ Last-mile couriers carry heavy parcels up stairs to walk-up apartments by hand, 
 
 ## Concept
 
-A steel hand truck on a pair of powered tri-star wheel clusters. A 24 V worm gearmotor with a spring-applied brake turns the clusters one third of a turn per step, lifting about 60 kg (132 lb) of parcels up a residential stair at about 20 steps per minute while the courier steadies the handle. An IMU on the frame slows the climb and stops it if the tilt angle leaves a safe window, so the courier can hold the load at its balance point. First-order estimates: about 1,300 loaded steps per charge from a 256 Wh LiFePO4 pack, about 24 kg truck mass and about $580 in parts. All figures are estimates at TRL 2.
+A steel hand truck on a pair of powered tri-star wheel clusters. A 24 V worm gearmotor with a spring-applied brake turns the clusters one third of a turn per step, lifting 60 kg (132 lb) of parcels up a residential stair at 20 steps per minute while the courier steadies the handle. An IMU on the frame slows the climb and stops it if the tilt angle leaves a safe window, so the courier can hold the load at its balance point. The TRL 3 calculations give about 1,390 loaded steps per charge from a 256 Wh LiFePO4 pack, a 24.3 kg truck and $580 in parts. They also show three requirements not yet met: the drive sprocket strikes stair nosings, the cluster arms catch large nosing overhangs, and the grip force at the edge of the tilt window is 107 N against 100 N. A fix is proposed for review. All figures are paper calculations, not measurements.
 
 Full design precis: [docs/02-concept.md](docs/02-concept.md)
 
@@ -51,6 +51,8 @@ The working bill of materials is in [bom/bom.csv](bom/bom.csv).
 | `build-log/` | Dated prototyping notes |
 
 ## Documentation
+
+Sizing calculations are in [docs/04-calcs/01-sizing.md](docs/04-calcs/01-sizing.md) (SCM-CAL-001), the parametric model in [cad/src/model.py](cad/src/model.py) with STEP and STL exports, and the general arrangement drawing in [cad/drawings/SCM-DWG-001.pdf](cad/drawings/SCM-DWG-001.pdf).
 
 Controlled documents follow the portfolio [documentation standard](.kit/STANDARDS.md). Each carries a document ID (SCM-PRC-001 for the precis), a version and a revision history. Branded PDFs are built with `python .kit/render.py` and attached to GitHub Releases when a document is tagged, for example `SCM-PRC-001/v1.0`.
 

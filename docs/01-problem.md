@@ -3,7 +3,7 @@ doc_id: SCM-PRB-001
 title: StepClimber problem statement
 project: StepClimber
 doc_type: Problem statement
-version: "0.2"
+version: "0.3"
 status: Draft
 date: '2026-09-25'
 author: Amish Chadha
@@ -17,6 +17,10 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Populate to TRL 2 (users, context, constraints, out of scope, cited prior work, open questions)
+- version: "0.3"
+  date: '2026-09-25'
+  author: Amish Chadha
+  change: Record Amish's 2026-09-25 decisions on the rated load and the pitch wording (SCM-DDR-001); note the nosing finding of SCM-CAL-001
 ---
 
 # StepClimber problem statement
@@ -81,9 +85,9 @@ StepClimber aims at the gap: a motor-driven tri-star hand truck that lifts about
 
 ## Open questions
 
-- Which user group first: gig couriers, a parcel company pilot, or appliance and moving crews? Proposed, awaiting Amish.
-- What stair load do couriers need most often: 40, 60 or 80 kg? The concept assumes 60 kg; to validate.
-- How steep are the walk-up stairs in the first target city? Riser and tread survey needed.
+- Which user group first: gig couriers, a parcel company pilot, or appliance and moving crews? Proposed, awaiting Amish (SCM-DDR-001 item 9).
+- What stair load do couriers need most often: 40, 60 or 80 kg? Amish decided on 2026-09-25 to rate the prototype at 60 kg until couriers are asked; interviews should confirm it.
+- How steep are the walk-up stairs in the first target city, and how far do their nosings overhang? Riser, tread and nosing survey needed: SCM-CAL-001 shows the baseline cluster catches nosings that overhang more than 23 mm.
 - Would a courier accept a 20 to 25 kg truck in the van, or is mass the main barrier to use?
 - Are building owners concerned about nosing damage, and what protection is enough?
 
