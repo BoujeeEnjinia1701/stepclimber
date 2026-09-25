@@ -1,8 +1,14 @@
 item,qty,spec,supplier,unit_cost_usd,make_buy,notes
-Tri-star wheel clusters (2),,,,,,
-Geared DC motor with worm drive,,,,,,
-Steel hand truck frame,,,,,,
-IMU tilt sensor,,,,,,
-Motor driver,,,,,,
-24 V LiFePO4 pack,,,,,,
-Dead-man grip switch,,,,,,
+1 Hand truck frame and toe plate,1,"Steel loop-handle hand truck, about 1,260 mm rails at 400 mm centers, 380 x 240 mm toe plate; welded-on axle mount plates added",Hardware or industrial supply store,70.00,buy,Indicative price for a commercial frame plus plate and welding (modified in house); about 8 kg
+2 Tri-star wheel clusters (pair),1,"Two laser-cut 6 mm steel spiders with 135 mm arms; six 150 mm solid rubber non-marking wheels on sealed bearings; hub bosses keyed to the shaft",Laser-cut service plus caster wheel supplier,65.00,make,Indicative price (wheels about $6 each; spiders about $29)
+3 Cluster shaft and chain drive,1,"25 mm steel shaft, two flange bearings, 06B roller chain, 10T and 60T sprockets (about 6:1), sheet-metal chain guard",Power transmission supplier,50.00,buy,Indicative price; sprocket clearance over stair nosings to be checked at TRL 3
+4 Worm gearmotor with brake,1,"24 V brushed, about 250 W, worm gearbox about 40 rpm output, 30 N·m rated or more, integral spring-applied electromagnetic brake",Wheelchair or mobility motor supplier,110.00,buy,Indicative price; self-locking worm plus brake give two independent holds
+5 Motor driver,1,"24 V, 30 A continuous brushed H-bridge with current sensing and brake-release output",Electronics distributor,30.00,buy,Indicative price
+6 Controller with IMU tilt sensor,1,"Small microcontroller board, 6-axis IMU, LED light bar and buzzer",Electronics distributor,25.00,buy,Indicative price; shares a sealed enclosure with item 5
+7 Battery pack,1,"24 V LiFePO4, 8S 10 Ah (256 Wh), BMS with cell-level protection and low-temperature charge block, quick-release cradle",Battery supplier,120.00,buy,Indicative price; about 2.6 kg
+8 Main switch fuse and harness,1,"Key switch, 40 A fuse in sealed holder near the pack, keyed connectors, 2.5 mm2 wiring",Electronics distributor,20.00,buy,Indicative price
+9 Handle controls,1,"Dead-man grip lever switch, up and down thumb switch, status light bar mount",Electronics or mobility parts supplier,20.00,buy,Indicative price
+10 Load strap,1,"25 mm ratchet strap, fixed to the frame",Hardware store,10.00,buy,Indicative price
+11 Nosing guard skids,2,"UHMW polyethylene strip, 500 x 25 x 10 mm",Plastics supplier,5.00,buy,Indicative price
+12 Charger,1,"29.2 V, 3 A LiFePO4 charger",Battery supplier,25.00,buy,Indicative price; no exploded-view callout
+13 Enclosure and hardware,1,"IP54 enclosure for items 5 and 6, fasteners, cable ties, thread locker",Hardware store,25.00,buy,Indicative price; no exploded-view callout

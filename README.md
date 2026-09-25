@@ -6,31 +6,35 @@
 
 Motor-assisted hand truck on tri-star wheel clusters that climb stairs one step at a time, with a tilt sensor that holds the load angle steady.
 
+![StepClimber concept](media/hero.png)
+
+[Interactive 3D model](media/viewer.html) · [Concept blueprint (PDF)](media/concept-blueprint.pdf) · [Review note](docs/REVIEW.md)
+
 ## Problem
 
 Last-mile couriers carry heavy parcels up stairs to walk-up apartments by hand, which causes injuries and slows deliveries.
 
 ## Concept
 
-Motor-assisted hand truck on tri-star wheel clusters that climb stairs one step at a time, with a tilt sensor that holds the load angle steady.
+A steel hand truck on a pair of powered tri-star wheel clusters. A 24 V worm gearmotor with a spring-applied brake turns the clusters one third of a turn per step, lifting about 60 kg (132 lb) of parcels up a residential stair at about 20 steps per minute while the courier steadies the handle. An IMU on the frame slows the climb and stops it if the tilt angle leaves a safe window, so the courier can hold the load at its balance point. First-order estimates: about 1,300 loaded steps per charge from a 256 Wh LiFePO4 pack, about 24 kg truck mass and about $580 in parts. All figures are estimates at TRL 2.
 
 Full design precis: [docs/02-concept.md](docs/02-concept.md)
 
 ## Key components
 
-- Tri-star wheel clusters (2)
-- Geared DC motor with worm drive
-- Steel hand truck frame
-- IMU tilt sensor
-- Motor driver
-- 24 V LiFePO4 pack
-- Dead-man grip switch
+- Steel hand truck frame with toe plate
+- Tri-star wheel clusters (pair), 150 mm solid rubber wheels
+- Cluster shaft with 6:1 chain drive
+- 24 V worm gearmotor with spring-applied brake
+- Motor driver and controller with IMU tilt sensor
+- 24 V LiFePO4 pack, 10 Ah, with BMS
+- Handle with dead-man grip and up and down switch
 
 The working bill of materials is in [bom/bom.csv](bom/bom.csv).
 
 ## Safety
 
-> Tipping risk on stairs. Hold-to-run control, a mechanical brake that engages when power is lost, and a rated load limit are required. Contains a lithium battery pack. Use a BMS with cell-level protection, fuse the pack, and charge on a non-combustible surface.
+> **Safety:** Runaway and tipping risk on stairs with the operator uphill of the load. Hold-to-run control, two independent holds when power is lost (self-locking worm and spring-applied brake), a tilt window and a rated load limit are required, and nobody may stand below the truck on a stair. Rotating clusters and the chain drive are pinch hazards and must be guarded. Contains a lithium iron phosphate pack: use a BMS with cell-level protection, fuse the pack, and charge on a non-combustible surface. See the safety section of [docs/02-concept.md](docs/02-concept.md).
 
 ## Repository layout
 
