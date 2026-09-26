@@ -4,14 +4,14 @@ Prices are indicative estimates in US dollars for one prototype, checked at TRL 
 
 | Group | Items | Cost |
 | --- | --- | --- |
-| Frame, clusters and drive | 1 to 4 | $295 |
+| Frame, clusters and drive | 1 to 4 | $348 |
 | Electronics and controls | 5, 6, 8, 9, 13 | $120 |
 | Battery and charger | 7, 12 | $145 |
 | Load strap and skids | 10, 11 | $20 |
-| **Total** | 1 to 13 | **$580** |
+| **Total** | 1 to 13 | **$633** |
 
-The total is $20 (3.3 %) under the $600 `budget_usd` in `project.yaml` and requirement R12; Amish kept the budget at $600 on 2026-09-25 (SCM-DDR-001). `docs/04-calcs/sizing.py` recomputes the total from `bom/bom.csv`.
+The total is $17 (2.6 %) under the $650 `budget_usd` in `project.yaml` and requirement R12. The budget was $600 until Amish accepted the recommendations on 2026-09-25 (SCM-DDR-002), which revisited it once the rework parts were priced. `docs/04-calcs/sizing.py` recomputes the total from `bom/bom.csv`.
 
-This BOM is the baseline design. SCM-CAL-001 finds that the item 3 sprocket and guard strike stair nosings (R15) and the item 2 arms catch large nosing overhangs (R2). The cluster and drive rework proposed in SCM-DDR-001 (item 11: 200 mm wheels, 150 mm arms, a second chain stage) would add roughly $35 and 1.5 kg (rough estimate) and take the total past $600; it is proposed, awaiting Amish, and is not in this BOM.
+This BOM carries the cluster and drive rework decided on 2026-09-25 (SCM-DDR-002): item 2 moved to 200 mm wheels on 150 mm arms ($65 to $88) and item 3 to a two-stage chain drive with a countershaft ($50 to $80). SCM-CAL-001 v0.2 finds that both now keep clear of stair nosings (R2, R15).
 
 Shipping, taxes and tools are not included.

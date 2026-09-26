@@ -135,3 +135,65 @@ TRL 2 figures corrected: endurance 1,300 to 1,394 steps; energy per step down 60
 ### Recommended next step
 
 TRL 4 is on hold by Amish's instruction. The next step is for Amish to decide the cluster and drive rework and the tilt window (SCM-DDR-001 items 11 to 13), after which the TRL 3 model, calculations, drawing and BOM would be revised in place at TRL 3. For the record only, TRL 4 would later need: a bench test article of one cluster and drive on a mock stair (landing, nosing clearance, torque and current), a hold test of the worm and brake under vibration (R8), a tilt control and hold-to-run bench test (R7, R9), a grip force measurement (R6), a test report (TST) with `environment: lab`, and build log entries.
+
+## Session 2026-09-25: recommendations accepted
+
+Amish wrote on 2026-09-25: "i accept all your recommendations, go with them across all repos." Every open StepClimber item that carried a recommendation is now **Decided by Amish, 2026-09-25: go with recommendation**, recorded in `docs/decisions/0002-recommendations-accepted.md` (SCM-DDR-002 v0.1). SCM-DDR-001 moved to v0.2 with the new statuses. TRL stays at 3.
+
+### Decisions applied and what changed
+
+| # | Decision | Before | After |
+| --- | --- | --- | --- |
+| 11 | Cluster and drive rework (Option A) | 135 mm arms, 150 mm wheels, one 06B stage 10T to 60T (6:1) | 150 mm arms, 200 mm wheels, 06B 10T to 35T then 08B 10T to 20T (7:1) through a countershaft 150 mm up the frame |
+| 11 | Shaft-line guard against nosings (R15) | 104 mm radius against 48 mm allowed | 53.9 mm against 54.2 mm allowed (32 mm overhang); countershaft guard clears by 96 mm |
+| 11 | Nosing overhang the arms clear (R2) | 23 mm | 32 mm |
+| 12 | Tilt window (R7) | Plus or minus 8 degrees | Plus or minus 6 degrees |
+| 13 | R3 climb speed | 20 steps/min | 17 steps/min on the same 250 W motor (238 W peak) |
+| 13 | R5 truck mass | 25 kg (truck 24.3 kg) | 27 kg (truck 26.3 kg) |
+| 13 | R12 and `budget_usd` | $600 (BOM $580) | $650 (BOM $633) |
+
+Files changed: `cad/src/model.py` (parameters and drive geometry; STEP and STL re-exported), `cad/src/sheets.py` (SCM-DWG-001 Rev P1 to P2), `cad/src/concept_media.py` (key figures and energy flow; `media/` regenerated and checked), `docs/04-calcs/sizing.py` and `results.csv`, SCM-CAL-001 v0.1 to v0.2, SCM-REQ-001 v0.3 to v0.4, SCM-PRC-001 v0.3 to v0.4, SCM-PRB-001 v0.3 to v0.4, `bom/bom.csv` (items 2 to 4), `bom/bom-notes.md`, `project.yaml` (`budget_usd` 650, DDR-002 added to the evidence) and `README.md`.
+
+Other figures that moved: endurance 1,394 to 1,327 loaded steps per charge; pack energy per step up 499 to 527 J; peak shaft torque 146 to 166 N·m; gearmotor output 25.7 to 25.8 N·m; safety factors shaft 2.0 to 1.8, spider 1.8 to 1.7, rail 2.9 to 2.8; upright height 1,418 to 1,451 mm; brake margin 8.0 to 8.2 times.
+
+### Requirement status (SCM-CAL-001 v0.2): 10 met, 1 not met, 4 not verifiable at TRL 3
+
+| ID | Status | Value |
+| --- | --- | --- |
+| **R6** grip force | **Not met** | 111 N at the plus or minus 6 degree window edge (100 N limit); 70 N at the set angle |
+| R1, R4, R10, R11, R13 | Met | Safety factors 1.7 or more; 1,327 steps; 25 N; 569 x 1,451 mm; 3.5 h charge |
+| R2 stair range | Met | Climbs to 225 mm risers, needs 240 mm treads, clears 32 mm overhangs |
+| R3 speed | Met, 5 % margin | 238 W at 17 steps/min |
+| R5 mass | Met, 0.7 kg margin | 26.3 kg |
+| R12 cost | Met, 2.6 % margin | $633 |
+| R15 stair protection | Met, no spare radius | Guard 53.9 mm against 54.2 mm |
+| R7, R8, R9, R14 | Not verifiable at TRL 3 | Need hardware |
+
+### Still awaiting Amish
+
+- Item 9: first user group (no recommendation was made).
+- Item 10: partner courier group or co-design partner (to be chosen per area later).
+- **New item 14: grip force after the rework (R6).** The longer arm widens the load's swing about its support wheel (plus or minus 71 to 89 mm), so the plus or minus 6 degree window gives 111 N rather than the 99 N it gave on the old cluster. Recommendation: keep plus or minus 6 degrees and relax R6 to 115 N until grip force is measured at TRL 4; alternatives are a plus or minus 4 degree window (4.4 degrees meets 100 N) or a longer handle.
+
+### Cross-repo actions
+
+None. StepClimber keeps its own 24 V pack, so no SwapCell or other repo change follows from these decisions.
+
+### Other changes this session
+
+- `README.md` gained the sections "Concept rationale", "Burning platform", "Where it could be used" and "What sparked the idea". The inspiration point is Eshcol S. Gross's manual lever-and-ratchet stair climbing dolly with three-armed wheel groups (US 3,515,401, 1970).
+- All documents, drawings and media were regenerated so the footers read designmolecule.com; older PDFs in `docs/pdf/` were removed.
+
+### Safety concerns
+
+- The shaft-line guard is sized exactly to its nosing envelope; a bent guard or a stair outside the R2 range could still strike a nosing mid-step.
+- The grip force at the window edge (111 N) is above target; a tired courier may not hold the angle on a long flight.
+- Runaway and tip-over with the courier uphill, worm creep under vibration, pinch points at the clusters (166 N·m peak) and two chain stages, and the 256 Wh pack remain as in the TRL 3 session.
+
+### TRL 4
+
+TRL 4 remains on hold by Amish's instruction. No test articles, test plans, build procedures, firmware or PCB files were created.
+
+### Recommended next step
+
+Amish decides item 14 (R6); the TRL 3 package is otherwise complete.

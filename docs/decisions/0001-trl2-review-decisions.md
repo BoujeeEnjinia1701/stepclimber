@@ -3,7 +3,7 @@ doc_id: SCM-DDR-001
 title: StepClimber TRL 2 review decisions
 project: StepClimber
 doc_type: Design decision record
-version: "0.1"
+version: "0.2"
 status: Draft
 date: '2026-09-25'
 author: Amish Chadha
@@ -13,12 +13,16 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Record Amish's 2026-09-25 decisions on the TRL 2 review, the items still open, and the new TRL 3 proposals
+- version: "0.2"
+  date: '2026-09-25'
+  author: Amish Chadha
+  change: Recommendations accepted by Amish (DDR-002)
 ---
 
 # 0001: TRL 2 review decisions
 
 - **Date:** 2026-09-25
-- **Status:** accepted (items 1 to 8); items 9 to 13 remain proposed, awaiting Amish
+- **Status:** accepted (items 1 to 8, and items 11 to 13 through SCM-DDR-002); items 9 and 10 remain proposed, awaiting Amish
 
 ## Context
 
@@ -51,18 +55,18 @@ Consequences of the cross-cutting decisions for this repo:
 - **Shared SwapCell pack pricing** does not apply for the same reason; the pack stays in this BOM.
 - **Co-design partners** are chosen per area later (item 10 stays open).
 
-*Table 2. Items still open.*
+*Table 2. Items open when this record was written. Items 11 to 13 were decided later on 2026-09-25 (SCM-DDR-002).*
 
 | # | Item | Status |
 | --- | --- | --- |
 | 9 | First user group for interviews: gig couriers, a parcel company pilot, or appliance and moving crews | Proposed, awaiting Amish (no recommendation was made) |
 | 10 | Partner courier group or co-design partner | Proposed, awaiting Amish (to be chosen per area later) |
-| 11 | Cluster and drive rework to meet R2 and R15 (SCM-CAL-001 section 3). Options: (A) 150 mm arms, 200 mm wheels, a two-stage chain drive with an 08B 20-tooth final sprocket, and a 54 mm shaft-line envelope; this likely pushes R5 past 25 kg and R12 past $600 and needs a larger motor or 18.8 steps/min. (B) Keep the cluster, restrict R2 to square nosings and find a shaft-line drive within a 48 mm radius (none identified at 146 N·m). (C) Change to a stepping-arm or tracked mechanism, which reverses item 4. Recommendation: A, with R5, R12 and R3 revisited once the parts are priced | Proposed, awaiting Amish |
-| 12 | Tilt window (R6, R7). Options: tighten the stop window from plus or minus 8 to plus or minus 6 degrees so the grip force stays under 100 N, or relax R6 to about 110 N. Recommendation: tighten to plus or minus 6 degrees | Proposed, awaiting Amish |
-| 13 | Follow-on target changes if item 11 A is chosen: R5 mass, R12 budget and R3 speed or motor size | Proposed, awaiting Amish |
+| 11 | Cluster and drive rework to meet R2 and R15 (SCM-CAL-001 section 3). Options: (A) 150 mm arms, 200 mm wheels, a two-stage chain drive with an 08B 20-tooth final sprocket, and a 54 mm shaft-line envelope; this likely pushes R5 past 25 kg and R12 past $600 and needs a larger motor or 18.8 steps/min. (B) Keep the cluster, restrict R2 to square nosings and find a shaft-line drive within a 48 mm radius (none identified at 146 N·m). (C) Change to a stepping-arm or tracked mechanism, which reverses item 4. Recommendation: A, with R5, R12 and R3 revisited once the parts are priced | Decided by Amish, 2026-09-25: go with recommendation (SCM-DDR-002) |
+| 12 | Tilt window (R6, R7). Options: tighten the stop window from plus or minus 8 to plus or minus 6 degrees so the grip force stays under 100 N, or relax R6 to about 110 N. Recommendation: tighten to plus or minus 6 degrees | Decided by Amish, 2026-09-25: go with recommendation (SCM-DDR-002) |
+| 13 | Follow-on target changes if item 11 A is chosen: R5 mass, R12 budget and R3 speed or motor size | Decided by Amish, 2026-09-25: go with recommendation (SCM-DDR-002): R3 17 steps/min, R5 27 kg, R12 $650 |
 
 ## Consequences
 
 - SCM-PRC-001, SCM-REQ-001 and SCM-PRB-001 move to v0.3 with these decisions; the design choices in items 1 to 8 are no longer "proposed".
-- The parametric model, drawing SCM-DWG-001 Rev P1 and BOM stay at the baseline cluster and drive. They show the R15 conflict rather than an unapproved fix.
+- At v0.1 the parametric model, drawing SCM-DWG-001 Rev P1 and BOM stayed at the baseline cluster and drive. After SCM-DDR-002 they carry the decided rework (drawing Rev P2).
 - TRL 3 is the hard stop. Nothing in this record starts TRL 4 work.

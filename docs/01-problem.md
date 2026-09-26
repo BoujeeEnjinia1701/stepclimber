@@ -3,7 +3,7 @@ doc_id: SCM-PRB-001
 title: StepClimber problem statement
 project: StepClimber
 doc_type: Problem statement
-version: "0.3"
+version: "0.4"
 status: Draft
 date: '2026-09-25'
 author: Amish Chadha
@@ -21,6 +21,10 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Record Amish's 2026-09-25 decisions on the rated load and the pitch wording (SCM-DDR-001); note the nosing finding of SCM-CAL-001
+- version: "0.4"
+  date: '2026-09-25'
+  author: Amish Chadha
+  change: Recommendations accepted by Amish (DDR-002); budget, mass constraint and stair survey question updated for the cluster rework
 ---
 
 # StepClimber problem statement
@@ -38,7 +42,7 @@ The tools on sale fall into two groups:
 1. **Manual tri-star stair trucks** cost about $100 but are rated for much less on stairs than on the flat, for example 70 kg (154 lb) on the flat and 35 kg (77 lb) on stairs ([Mount-It MI-953](https://www.mount-it.com/products/tri-wheel-stair-climber-hand-truck-with-foldable-design-mi-953)). The courier still supplies all the lift.
 2. **Powered stair climbers** use a stepping mechanism or tracks and carry 110 to 170 kg at up to 48 steps per minute ([SANO Liftkar SAL](https://www.sano-stairclimbers.com/load-transporters/products/liftkar-sal)), but a typical unit sells for about $4,400 ([Zoro listing](https://www.zoro.com/sano-liftkar-pro-uni-loop-grip-stairclimbing-hand-truck-245-lbs-cap-puncture-proof-wheels-wl-sp11un03lo18/i/G416283780/)). That is out of reach for gig couriers and small delivery firms, and the units are closed designs.
 
-StepClimber aims at the gap: a motor-driven tri-star hand truck that lifts about 60 kg one step at a time for a parts cost of about $600, with a tilt sensor that helps the courier hold the load at a safe angle.
+StepClimber aims at the gap: a motor-driven tri-star hand truck that lifts about 60 kg one step at a time for a parts cost of about $650, with a tilt sensor that helps the courier hold the load at a safe angle.
 
 ## Users and context
 
@@ -61,8 +65,8 @@ StepClimber aims at the gap: a motor-driven tri-star hand truck that lifts about
 
 ## Constraints
 
-- Garage-buildable prototype, about $600 USD in parts.
-- Light enough to lift into a vehicle by one person: 25 kg or less including the battery (proposed target in SCM-REQ-001).
+- Garage-buildable prototype, about $650 USD in parts (budget revised from $600 by Amish on 2026-09-25, SCM-DDR-002).
+- Light enough to lift into a vehicle by one person: 27 kg or less including the battery (SCM-REQ-001 R5, revised on 2026-09-25).
 - Fits standard residential stairs and doors (about 760 mm (30 in) clear width) without adjustment.
 - Hold-to-run control, and the load must stay put on the stair if power, the motor or the operator's grip is lost.
 - Low-voltage (24 V class) battery with a BMS; no exposed mains.
@@ -87,8 +91,8 @@ StepClimber aims at the gap: a motor-driven tri-star hand truck that lifts about
 
 - Which user group first: gig couriers, a parcel company pilot, or appliance and moving crews? Proposed, awaiting Amish (SCM-DDR-001 item 9).
 - What stair load do couriers need most often: 40, 60 or 80 kg? Amish decided on 2026-09-25 to rate the prototype at 60 kg until couriers are asked; interviews should confirm it.
-- How steep are the walk-up stairs in the first target city, and how far do their nosings overhang? Riser, tread and nosing survey needed: SCM-CAL-001 shows the baseline cluster catches nosings that overhang more than 23 mm.
-- Would a courier accept a 20 to 25 kg truck in the van, or is mass the main barrier to use?
+- How steep are the walk-up stairs in the first target city, and how far do their nosings overhang? Riser, tread and nosing survey needed: the reworked cluster (SCM-DDR-002) covers risers to about 225 mm and nosing overhangs to 32 mm, and needs treads of about 240 mm or more.
+- Would a courier accept a truck of about 26 kg in the van, or is mass the main barrier to use?
 - Are building owners concerned about nosing damage, and what protection is enough?
 
 ## User research

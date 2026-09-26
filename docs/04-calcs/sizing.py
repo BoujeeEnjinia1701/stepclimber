@@ -1,4 +1,4 @@
-"""StepClimber sizing calculations, SCM-CAL-001 v0.1 (TRL 3).
+"""StepClimber sizing calculations, SCM-CAL-001 v0.2 (TRL 3, cluster and drive rework decided 2026-09-25, SCM-DDR-002).
 
 Run from the repo root:  python docs/04-calcs/sizing.py
 Prints every number quoted in docs/04-calcs/01-sizing.md and writes docs/04-calcs/results.csv.
@@ -38,14 +38,15 @@ def head(t):
 # ---------------------------------------------------------------- 1. Assumptions
 M_PAYLOAD = 60.0            # kg, rated stair load (R1, decided 2026-09-25)
 MASS = {                    # kg, truck mass roll-up (BOM item numbers)
-    "1 frame and toe plate": 8.0, "2 clusters (pair)": 4.0, "3 shaft, bearings, sprockets, chain, guard": 2.0,
+    "1 frame and toe plate": 8.0, "2 clusters (pair)": 5.5, "3 shaft, countershaft, bearings, sprockets, chains, guards": 2.5,
     "4 worm gearmotor with brake": 4.5, "5 and 6 driver, controller, IMU": 0.8, "7 pack and cradle": 2.6,
     "8 switch, fuse, harness": 0.5, "9 handle controls": 0.6, "10 strap": 0.4, "11 skids": 0.4,
     "13 enclosure and hardware": 0.5,
 }
 H_CG = 500.0                # mm, combined center of mass above the shaft, along the frame
-STEPS_PER_MIN = 20.0        # R3
+STEPS_PER_MIN = 17.0        # R3, revised 2026-09-25 (SCM-DDR-002) to keep the 250 W motor
 ETA_DRV, ETA_MOT, ETA_WORM, ETA_CHAIN = 0.95, 0.80, 0.45, 0.95
+ETA_CHAIN2 = 0.97           # second chain stage (08B), added by the rework
 DYN = 1.3                   # friction and dynamics factor on static shaft torque
 LEAD = 4.0                  # deg, worm lead angle (single start, ratio about 75)
 I_WORM = 75.0               # worm gear ratio (motor about 3,000 rpm to 40 rpm)
@@ -57,7 +58,7 @@ DOD = 0.90                  # usable fraction
 STANDBY = 1.10              # factor for standby, starts and stops
 CHG_V, CHG_A, ETA_CHG, CV_TAIL = 29.2, 3.0, 0.90, 0.3   # charger; CV tail in h
 CRR = 0.03                  # rolling resistance, solid rubber on a smooth floor
-WINDOW = 8.0                # deg, R7 tilt window
+WINDOW = 6.0                # deg, R7 tilt window (tightened from 8, SCM-DDR-002)
 F_HANDLE_MAX = 100.0        # N, R6
 NOSE = (0.0, 32.0)          # mm, nosing overhang range (R2)
 H_DESIGN, T_DESIGN = 196.0, 254.0   # IRC maximum riser and minimum tread
@@ -67,7 +68,8 @@ SY_SHAFT, SY_PLATE, SY_TUBE = 370.0, 275.0, 250.0   # MPa: 1018 cold drawn, S275
 KT_KEY = 2.0                # keyway stress concentration
 SHOCK = 3.0                 # dropped-step dynamic factor
 CHAIN_BREAK = {"06B": (9.525, 8.9e3), "08B": (12.7, 17.8e3)}   # pitch mm, ISO 606 minimum tensile N
-BUDGET = 600.0
+R5_MAX = 27.0               # kg, R5 truck mass, revised 2026-09-25 (SCM-DDR-002)
+BUDGET = 650.0              # USD, budget_usd revised 2026-09-25 (SCM-DDR-002)
 
 a, r = P["arm"], P["wheel_r"]
 d = D["spacing"]
@@ -194,13 +196,27 @@ print(f"Largest nosing overhang the straight spider arms clear over the R2 riser
 rec("env_radius_n0_mm", round(env[0.0]), "mm"); rec("env_radius_n32_mm", round(env[32.0]), "mm")
 rec("overhang_max_arms_mm", n_arm_ok, "mm")
 ENVELOPE = [("Shaft", P["shaft_d"] / 2), ("Spider boss", P["boss_r"]), ("Flange bearing housing", P["bearing_r"]),
-            (f"{P['z_driven']}T sprocket guard", D["guard_r"])]
+            (f"{P['z_driven']}T 08B sprocket guard", D["guard_r"])]
 for name, rad in ENVELOPE:
-    print(f"  {name:28s} radius {rad:5.0f} mm: {'clear' if rad <= env[0.0] else 'HITS'} (no overhang), "
+    print(f"  {name:28s} radius {rad:5.1f} mm: {'clear' if rad <= env[0.0] else 'HITS'} (no overhang), "
           f"{'clear' if rad <= env[32.0] else 'HITS'} (32 mm overhang)")
-print(f"Baseline guard interference with a nosing: {D['guard_r'] - env[0.0] - ENV_MARGIN:.0f} mm (no overhang)")
-rec("guard_radius_baseline_mm", round(D["guard_r"]), "mm")
-rec("guard_interference_mm", round(D["guard_r"] - env[0.0] - ENV_MARGIN), "mm")
+env_exact = sweep(32.0)[0] - ENV_MARGIN
+print(f"Shaft-line guard radius {D['guard_r']:.1f} mm against {env_exact:.1f} mm allowed with 32 mm overhang: "
+      f"margin {env_exact - D['guard_r']:.1f} mm (plus the {ENV_MARGIN:.0f} mm clearance)")
+rec("guard_radius_mm", round(D["guard_r"], 1), "mm"); rec("guard_margin_n32_mm", round(env_exact - D["guard_r"], 1), "mm")
+
+# Countershaft guard (fixed to the frame, cs_z up the frame from the shaft) against every nosing
+u = (-math.sin(math.radians(TILT)), math.cos(math.radians(TILT)))       # up the frame
+cs_min = 1e9
+for h in RISERS:
+    for n in NOSE:
+        for ph, piv, hub, wheels in climb_states(h, n):
+            c_s = (hub[0] + P["cs_z"] * u[0], hub[1] + P["cs_z"] * u[1])
+            for c in [(n, h), (n - T_DESIGN, 2 * h), (n - 2 * T_DESIGN, 3 * h)]:
+                cs_min = min(cs_min, math.hypot(c_s[0] - c[0], c_s[1] - c[1]))
+print(f"Countershaft {P['cs_z']:.0f} mm up the frame: nearest nosing {cs_min:.0f} mm; guard radius {D['cs_guard_r']:.0f} mm; "
+      f"clearance {cs_min - D['cs_guard_r']:.0f} mm")
+rec("countershaft_nosing_clear_mm", round(cs_min - D["cs_guard_r"]), "mm")
 
 # Frame back vs the nosings above, beyond the shaft-line region, on the design stair at the set tilt
 u = (-math.sin(math.radians(TILT)), math.cos(math.radians(TILT)))       # up the frame
@@ -218,7 +234,7 @@ print(f"Frame back above the shaft region: nearest nosing {fb_min:.0f} mm behind
       f"{back_depth:.0f} mm; clearance {fb_min - back_depth:.0f} mm")
 rec("frame_back_nosing_clear_mm", round(fb_min - back_depth), "mm")
 
-# Alternative cluster sizes (for the proposal in SCM-DDR-001 open items)
+# Cluster sizes compared (the basis of the rework decided in SCM-DDR-002)
 print("Alternative clusters: arm, wheel dia -> hub clearance n0/n32, arm clearance n0/n32, landing at 200, tread needed at 100")
 _save = (a, r, d)
 ALT = {}
@@ -233,23 +249,6 @@ for arm_alt, r_alt in ((135, 75), (135, 100), (150, 75), (150, 100), (165, 100))
     rec(f"alt_a{arm_alt}_w{2 * r_alt}_hub_n32_mm", round(s32[0]), "mm")
     rec(f"alt_a{arm_alt}_w{2 * r_alt}_arm_n32_mm", round(s32[1]), "mm")
 a, r, d = _save
-ALT_PICK = (150, 100)
-env_alt = ALT[ALT_PICK][1][0] - ENV_MARGIN
-print(f"Proposed alternative {ALT_PICK[0]} mm arms with {2 * ALT_PICK[1]} mm wheels: shaft-line envelope up to {env_alt:.0f} mm")
-rec("alt_env_radius_mm", round(env_alt), "mm")
-
-# Final sprocket that fits the alternative envelope (guard gap included)
-fix = {}
-for ch, (pitch, brk) in CHAIN_BREAK.items():
-    for z in range(40, 8, -1):
-        od = pitch * (0.6 + 1 / math.tan(math.pi / z))
-        if od / 2 + P["guard_gap"] <= env_alt:
-            fix[ch] = (z, od, pitch / math.sin(math.pi / z))
-            break
-    if ch in fix:
-        print(f"  Final sprocket inside {env_alt:.0f} mm: {ch} up to {fix[ch][0]}T, OD {fix[ch][1]:.0f} mm, PD {fix[ch][2]:.1f} mm")
-        rec(f"fix_{ch}_max_teeth", fix[ch][0], "teeth")
-
 # ---------------------------------------------------------------- 4. Torque, speed and power
 head("4. Torque, speed and power")
 w_shaft = 2 * math.pi / 3 / (60.0 / STEPS_PER_MIN)          # rad/s
@@ -292,15 +291,15 @@ t_peak = t_static * DYN
 lift_J = W * H_DESIGN / 1000
 t_mean = lift_J / (2 * math.pi / 3)
 p_shaft = t_peak * w_shaft
-p_motor = p_shaft / (ETA_CHAIN * ETA_WORM)
+p_motor = p_shaft / (ETA_CHAIN * ETA_CHAIN2 * ETA_WORM)
 ratio = D["ratio"]
 gm_rpm = rpm_shaft * ratio
-gm_torque = t_peak / (ratio * ETA_CHAIN)
+gm_torque = t_peak / (ratio * ETA_CHAIN * ETA_CHAIN2)
 print(f"Lift work per step {lift_J:.0f} J; mean shaft torque {t_mean:.0f} N m")
 print(f"Peak static shaft torque {t_static:.0f} N m (weight on the arm plus handle force), x{DYN} -> {t_peak:.0f} N m")
 print(f"Peak shaft power {p_shaft:.0f} W; peak motor output {p_motor:.0f} W against {P_MOTOR:.0f} W rated "
       f"(margin {100 * (1 - p_motor / P_MOTOR):.0f} %)")
-print(f"Chain ratio {ratio:.1f}:1; gearmotor {gm_rpm:.0f} rpm, {gm_torque:.1f} N m against {GM_RATED:.0f} N m rated")
+print(f"Chain ratio {D['ratio1']:.1f} x {D['ratio2']:.1f} = {ratio:.1f}:1; gearmotor {gm_rpm:.0f} rpm, {gm_torque:.1f} N m against {GM_RATED:.0f} N m rated")
 for k, v, un in [("lift_work_J", round(lift_J), "J"), ("shaft_torque_mean_Nm", round(t_mean), "N m"),
                  ("shaft_torque_static_Nm", round(t_static), "N m"), ("shaft_torque_peak_Nm", round(t_peak), "N m"),
                  ("shaft_rpm", round(rpm_shaft, 2), "rpm"), ("shaft_power_peak_W", round(p_shaft), "W"),
@@ -308,32 +307,30 @@ for k, v, un in [("lift_work_J", round(lift_J), "J"), ("shaft_torque_mean_Nm", r
                  ("gearmotor_torque_Nm", round(gm_torque, 1), "N m")]:
     rec(k, v, un)
 chain_t = t_peak / (D["sprocket_pd"] / 2000)
-sf_chain = CHAIN_BREAK["06B"][1] / chain_t
-print(f"Chain pull at peak with the {P['z_driven']}T sprocket: {chain_t:.0f} N; 06B safety factor {sf_chain:.1f}")
-rec("chain_pull_N", round(chain_t), "N"); rec("chain_sf_06B", round(sf_chain, 1))
-_save = (a, r, d)
-a, r, d = ALT_PICK[0], ALT_PICK[1], ALT_PICK[0] * math.sqrt(3)
-t_alt = torque_profile(H_DESIGN, 0.0, F_edge)[0] * DYN
-p_alt = t_alt * w_shaft / (ETA_CHAIN * ETA_WORM)
-spm_alt = STEPS_PER_MIN * P_MOTOR / p_alt
-a, r, d = _save
-print(f"Alternative cluster {ALT_PICK[0]} mm arms: peak shaft torque {t_alt:.0f} N m; motor output {p_alt:.0f} W at "
-      f"{STEPS_PER_MIN:.0f} steps/min, or {spm_alt:.1f} steps/min on the {P_MOTOR:.0f} W motor")
-rec("alt_torque_peak_Nm", round(t_alt), "N m"); rec("alt_motor_W", round(p_alt), "W")
-rec("alt_steps_per_min_250W", round(spm_alt, 1), "steps/min")
-for ch, (z, od, pd) in fix.items():
-    pull = t_alt / (pd / 2000)
-    print(f"  Fix option {ch} {z}T final sprocket: chain pull {pull:.0f} N, safety factor "
-          f"{CHAIN_BREAK[ch][1] / pull:.1f}")
-    rec(f"fix_{ch}_chain_sf", round(CHAIN_BREAK[ch][1] / pull, 1))
+sf_chain = CHAIN_BREAK["08B"][1] / chain_t
+t_cs = t_peak / (D["ratio2"] * ETA_CHAIN2)
+chain1_t = t_cs / (D["cs1_pd"] / 2000)
+sf_chain1 = CHAIN_BREAK["06B"][1] / chain1_t
+spm_max = STEPS_PER_MIN * P_MOTOR / p_motor
+print(f"Final stage 08B, {P['z_driven']}T on the shaft: chain pull {chain_t:.0f} N, safety factor {sf_chain:.1f}")
+print(f"First stage 06B, {P['z_cs1']}T on the countershaft ({t_cs:.0f} N m): chain pull {chain1_t:.0f} N, "
+      f"safety factor {sf_chain1:.1f}")
+print(f"Fastest climb on the {P_MOTOR:.0f} W motor: {spm_max:.1f} steps/min")
+rec("chain_pull_08B_N", round(chain_t), "N"); rec("chain_sf_08B", round(sf_chain, 1))
+rec("chain_pull_06B_N", round(chain1_t), "N"); rec("chain_sf_06B", round(sf_chain1, 1))
+rec("steps_per_min_max_250W", round(spm_max, 1), "steps/min")
+# Motor output the TRL 3 baseline rate of 20 steps/min would need with this cluster
+p20 = p_motor * 20.0 / STEPS_PER_MIN
+print(f"At 20 steps/min this cluster would need {p20:.0f} W from the motor")
+rec("motor_output_at_20spm_W", round(p20), "W")
 
 # ---------------------------------------------------------------- 5. Energy and endurance
 head("5. Energy and endurance")
-eta_up = ETA_DRV * ETA_MOT * ETA_WORM * ETA_CHAIN
+eta_up = ETA_DRV * ETA_MOT * ETA_WORM * ETA_CHAIN * ETA_CHAIN2
 e_up = lift_J / eta_up
 rho = math.degrees(math.atan(math.tan(math.radians(LEAD)) / ETA_WORM)) - LEAD
 lower_ratio = math.tan(math.radians(rho - LEAD)) / math.tan(math.radians(LEAD))
-e_down = lift_J * ETA_CHAIN * lower_ratio / (ETA_MOT * ETA_DRV)
+e_down = lift_J * ETA_CHAIN * ETA_CHAIN2 * lower_ratio / (ETA_MOT * ETA_DRV)
 e_use = E_PACK * DOD * 3600
 n_steps = e_use / ((e_up + e_down) * STANDBY)
 t_chg = E_PACK / (CHG_V * CHG_A * ETA_CHG) + CV_TAIL
@@ -434,15 +431,17 @@ REQ = [
     ("R1", "Rated stair load", "60 kg up and down; 100 kg on the flat",
      f"Shaft SF {sf_shaft:.1f}, spider SF {SY_PLATE / vm_arm:.1f}, rail SF {SY_TUBE / s_rail:.1f} at {SHOCK:.0f} g", "met"),
     ("R2", "Stair range", "Risers 100 to 200 mm, treads 250 mm or more, nosing up to 32 mm",
-     f"Landing {landing(200, 0)[0]:.0f} mm past the nosing at 200 mm; arms clear nosings only up to {n_arm_ok} mm overhang",
-     "not met"),
-    ("R3", "Climb speed", "20 steps/min or more at rated load",
-     f"{p_motor:.0f} W peak motor output on a {P_MOTOR:.0f} W motor", "met"),
+     f"Landing {landing(200, 0)[0]:.0f} mm past the nosing at 200 mm; tread needed {r - landing(100, 0)[1]:.0f} mm; "
+     f"arms clear nosings up to {n_arm_ok} mm overhang", "met" if n_arm_ok >= 32 else "not met"),
+    ("R3", "Climb speed", f"{STEPS_PER_MIN:.0f} steps/min or more at rated load",
+     f"{p_motor:.0f} W peak motor output on a {P_MOTOR:.0f} W motor", "met" if p_motor <= P_MOTOR else "not met"),
     ("R4", "Endurance", "1,000 loaded steps up plus 1,000 down per charge", f"{n_steps:,.0f}", "met"),
-    ("R5", "Truck mass", "25 kg or less; pack 3 kg or less", f"{m_truck:.1f} kg; pack {MASS['7 pack and cradle']} kg", "met"),
+    ("R5", "Truck mass", f"{R5_MAX:.0f} kg or less; pack 3 kg or less", f"{m_truck:.1f} kg; pack {MASS['7 pack and cradle']} kg",
+     "met" if m_truck <= R5_MAX else "not met"),
     ("R6", "Operator handle force", "100 N or less inside the tilt window",
-     f"{F_edge:.0f} N at the +/-{WINDOW:.0f} deg edge; {F_set:.0f} N at the set angle", "not met"),
-    ("R7", "Tilt control", "100 Hz IMU, +/-8 deg window, stop within 0.2 s", "Control concept only", "not verifiable at TRL 3"),
+     f"{F_edge:.0f} N at the +/-{WINDOW:.0f} deg edge; {F_set:.0f} N at the set angle",
+     "met" if F_edge <= F_HANDLE_MAX else "not met"),
+    ("R7", "Tilt control", f"100 Hz IMU, +/-{WINDOW:.0f} deg window, stop within 0.2 s", "Control concept only", "not verifiable at TRL 3"),
     ("R8", "Hold on any loss", "Holds with power off; drift 5 mm or less in 10 min",
      f"Worm self-locking (back-drive {eta_back:.2f}); brake margin {T_BRAKE / brake_need:.1f}x; drift unmeasured",
      "not verifiable at TRL 3"),
@@ -450,12 +449,13 @@ REQ = [
     ("R10", "Flat rolling", "40 N or less at rated load", f"{push:.0f} N", "met"),
     ("R11", "Size", "Width 600 mm or less; upright height 1,500 mm or less",
      f"{D['width']:.0f} mm; {D['height_upright']:.0f} mm", "met"),
-    ("R12", "Affordable", "$600 or less", f"${cost:.0f}", "met"),
+    ("R12", "Affordable", f"${BUDGET:.0f} or less", f"${cost:.0f}", "met" if cost <= BUDGET else "not met"),
     ("R13", "Battery", "24 V LiFePO4, BMS, fused, 0 to 45 degC charge window, 4 h charge", f"{t_chg:.1f} h", "met"),
     ("R14", "Environment", "0 to 40 degC, IP54, rain on stoops", "Enclosure concept only", "not verifiable at TRL 3"),
     ("R15", "Stair and building protection", "No steel contact with stairs; skids over nosings",
-     f"{P['z_driven']}T sprocket guard radius {D['guard_r']:.0f} mm against {env[0.0]:.0f} mm allowed",
-     "not met"),
+     f"{P['z_driven']}T sprocket guard radius {D['guard_r']:.1f} mm against {env_exact:.1f} mm allowed; "
+     f"countershaft guard clears by {cs_min - D['cs_guard_r']:.0f} mm",
+     "met" if D["guard_r"] <= env_exact and cs_min > D["cs_guard_r"] + ENV_MARGIN else "not met"),
 ]
 head("11. Requirements")
 for rid, name, tgt, val, st in REQ:

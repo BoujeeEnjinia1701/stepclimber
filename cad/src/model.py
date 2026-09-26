@@ -1,4 +1,4 @@
-"""StepClimber parametric model (build123d), TRL 3.
+"""StepClimber parametric model (build123d), TRL 3, cluster and drive rework (SCM-DDR-002).
 
 Run from the repo root:  python cad/src/model.py
 Exports STEP and STL into cad/step and cad/stl and prints the main envelopes.
@@ -16,30 +16,34 @@ from pathlib import Path
 
 # Top-level parameters (mm, degrees). Edit these, not the geometry below.
 PARAMS = {
-    # Tri-star clusters (SCM-PRC-001 v0.3)
-    "wheel_r": 75.0,           # 150 mm solid rubber wheels
+    # Tri-star clusters (SCM-PRC-001 v0.4; rework decided 2026-09-25, SCM-DDR-002)
+    "wheel_r": 100.0,          # 200 mm solid rubber wheels (were 150 mm)
     "wheel_w": 45.0,
     "wheel_hub_l": 55.0,       # wheel hub and axle boss length
-    "arm": 135.0,              # cluster hub to wheel center
+    "arm": 150.0,              # cluster hub to wheel center (was 135 mm)
     "arm_w": 45.0,             # spider arm width
     "spider_t": 6.0,           # laser-cut steel spider plate
     "boss_r": 38.0,            # spider hub boss radius
     "cluster_y": 262.0,        # cluster (wheel) mid-plane half-spacing
     "spider_off": 30.0,        # spider plate inboard of the wheel mid-plane
-    # Shaft and chain drive
+    # Shaft and two-stage chain drive (SCM-CAL-001 v0.2 section 4)
     "shaft_d": 25.0,
     "bearing_r": 45.0,         # flange bearing housing radius
-    "chain_pitch": 9.525,      # 06B roller chain
-    "z_driven": 60,            # driven (shaft) sprocket teeth; baseline, see SCM-CAL-001 section 4
-    "z_drive": 10,             # gearmotor sprocket teeth
-    "chain_c": 290.0,          # chain center distance along the frame
+    "chain_pitch": 12.7,       # final stage: 08B roller chain, countershaft to cluster shaft
+    "z_driven": 20,            # cluster shaft sprocket teeth, 08B (was 60T 06B)
+    "z_cs2": 10,               # countershaft final-stage sprocket teeth, 08B
+    "cs_z": 150.0,             # countershaft above the cluster shaft, along the frame
+    "chain1_pitch": 9.525,     # first stage: 06B roller chain, gearmotor to countershaft
+    "z_cs1": 35,               # countershaft first-stage sprocket teeth, 06B (7:1 overall)
+    "z_drive": 10,             # gearmotor sprocket teeth, 06B
+    "chain_c": 290.0,          # gearmotor output above the cluster shaft, along the frame
     "guard_gap": 10.0,         # sprocket to guard clearance, plus sheet
     "sprocket_y": 120.0,       # sprocket plane
     # Frame (steel hand truck)
     "rail_y": 200.0,           # rail centerline half-spacing
     "rail_r": 14.0,            # 28 mm rail tube
     "rail_x": 40.0,            # rail centerline toward the load side of the shaft
-    "rail_below": 110.0,       # rail length below the shaft
+    "rail_below": 142.5,       # rail length below the shaft (toe plate about 25 mm off the floor)
     "frame_h": 1150.0,         # rail length above the shaft
     "handle_rise": 110.0,      # loop handle rise above the rail tops
     "handle_x": -40.0,         # grip centerline
@@ -63,15 +67,20 @@ def derived(p=PARAMS):
     """Key derived dimensions, shared with docs/04-calcs/sizing.py."""
     a, r = p["arm"], p["wheel_r"]
     hub_z = r + a * math.sin(math.radians(30))
-    pd = lambda n: p["chain_pitch"] / math.sin(math.pi / n)
-    od = lambda n: p["chain_pitch"] * (0.6 + 1 / math.tan(math.pi / n))
+    pd = lambda n, t=p["chain_pitch"]: t / math.sin(math.pi / n)
+    od = lambda n, t=p["chain_pitch"]: t * (0.6 + 1 / math.tan(math.pi / n))
+    t1 = p["chain1_pitch"]
     width = 2 * (p["cluster_y"] + p["wheel_w"] / 2)   # wheel outer faces
     top = hub_z + p["frame_h"] + p["handle_rise"] + p["grip_r"]
     return {
         "spacing": a * math.sqrt(3), "hub_z": hub_z, "cluster_dia": 2 * (a + r),
         "sprocket_pd": pd(p["z_driven"]), "sprocket_od": od(p["z_driven"]),
-        "drive_pd": pd(p["z_drive"]), "ratio": p["z_driven"] / p["z_drive"],
+        "cs2_pd": pd(p["z_cs2"]), "cs1_pd": pd(p["z_cs1"], t1), "cs1_od": od(p["z_cs1"], t1),
+        "drive_pd": pd(p["z_drive"], t1),
+        "ratio1": p["z_cs1"] / p["z_drive"], "ratio2": p["z_driven"] / p["z_cs2"],
+        "ratio": (p["z_cs1"] / p["z_drive"]) * (p["z_driven"] / p["z_cs2"]),
         "guard_r": od(p["z_driven"]) / 2 + p["guard_gap"],
+        "cs_guard_r": od(p["z_cs1"], t1) / 2 + p["guard_gap"],
         "width": width, "height_upright": top,
         "handle_len": p["frame_h"] + p["handle_rise"],
         "folded_height": hub_z + p["fold_z"] + p["rail_r"],
@@ -124,16 +133,26 @@ def build(p=PARAMS):
         cl.append(ycyl(0, ys, Z0, p["boss_r"], 26))
     parts["clusters"] = Compound(children=cl)
 
-    # 3 Shaft, flange bearings, driven sprocket and chain guard
+    # 3 Shaft, flange bearings and two-stage chain drive with guards
+    # Final stage (08B) in the plane y2: countershaft 10T to cluster shaft 20T.
+    # First stage (06B) in the plane y1: gearmotor 10T to countershaft 30T.
+    y1, y2 = p["sprocket_y"], p["sprocket_y"] - 25
+    zc, zg = Z0 + p["cs_z"], Z0 + p["gm_z"]
     sh = [ycyl(0, 0, Z0, p["shaft_d"] / 2, 2 * (p["cluster_y"] - p["spider_off"]) + 26)]
     sh += [ycyl(0, s * (ry + 14), Z0, p["bearing_r"], 16) for s in (-1, 1)]
-    sh += [ycyl(0, p["sprocket_y"], Z0, D["sprocket_od"] / 2, 6)]
-    sh += [ycyl(0, p["sprocket_y"], p["gm_z"] + Z0, D["drive_pd"] / 2 + 5, 6)]
-    # guard: a flat sheet box round both sprockets and the chain run (fixed to the frame)
-    gr = D["guard_r"]
-    guard = (ycyl(0, p["sprocket_y"], Z0, gr, 30) - ycyl(0, p["sprocket_y"], Z0, gr - 2, 26)) + \
-        box(-gr + 1 + 0, p["sprocket_y"], Z0 + p["gm_z"] / 2, 2, 30, p["gm_z"]) + \
-        box(D["drive_pd"] / 2 + 12, p["sprocket_y"], Z0 + p["gm_z"] / 2 + gr / 2, 2, 30, p["gm_z"] - gr)
+    sh += [ycyl(0, y2, Z0, D["sprocket_od"] / 2, 8)]                        # 20T 08B on the cluster shaft
+    sh += [ycyl(0, (y2 + ry) / 2, zc, 10, ry - y2 + 20)]                      # 20 mm countershaft
+    sh += [ycyl(0, ry - 14, zc, 28, 16)]                                      # countershaft bearing on the rail
+    sh += [ycyl(0, y2, zc, D["cs2_pd"] / 2 + 6, 8)]                           # 10T 08B on the countershaft
+    sh += [ycyl(0, y1, zc, D["cs1_od"] / 2, 6)]                               # 30T 06B on the countershaft
+    sh += [ycyl(0, y1, zg, D["drive_pd"] / 2 + 5, 6)]                         # 10T 06B on the gearmotor
+    # guards: flat sheet rings round the sprockets and plates along both chain runs (fixed to the frame)
+    gr, cr = D["guard_r"], D["cs_guard_r"]
+    ring = lambda z, y, rr, w: ycyl(0, y, z, rr, w) - ycyl(0, y, z, rr - 2, w - 4)
+    guard = ring(Z0, y2, gr, 30) + ring(zc, y1, cr, 26)
+    for s_ in (-1, 1):
+        guard += box(s_ * (gr - 1), y2, (Z0 + zc) / 2, 2, 30, p["cs_z"])
+        guard += box(s_ * (cr - 1), y1, (zc + zg) / 2, 2, 26, zg - zc)
     sh += [guard]
     parts["drive"] = Compound(children=sh)
 
@@ -207,5 +226,8 @@ if __name__ == "__main__":
     print(f"Assembly bounding box (upright): {bb.size.X:.0f} x {bb.size.Y:.0f} x {bb.size.Z:.0f} mm (X x Y x Z)")
     print(f"Width {D['width']:.0f} mm, upright height {D['height_upright']:.0f} mm (formula), model top {bb.max.Z:.0f} mm")
     print(f"Hub height {D['hub_z']:.1f} mm, wheel spacing {D['spacing']:.1f} mm, cluster diameter {D['cluster_dia']:.0f} mm")
-    print(f"Driven sprocket {PARAMS['z_driven']}T: PD {D['sprocket_pd']:.1f} mm, OD {D['sprocket_od']:.1f} mm; guard radius {D['guard_r']:.1f} mm")
+    print(f"Final stage 08B {PARAMS['z_cs2']}T to {PARAMS['z_driven']}T: shaft sprocket PD {D['sprocket_pd']:.1f} mm, "
+          f"OD {D['sprocket_od']:.1f} mm; guard radius {D['guard_r']:.1f} mm")
+    print(f"First stage 06B {PARAMS['z_drive']}T to {PARAMS['z_cs1']}T; countershaft guard radius {D['cs_guard_r']:.1f} mm; "
+          f"overall ratio {D['ratio']:.0f}:1")
     print(f"Folded height with Option C hinge (study): {D['folded_height']:.0f} mm")
