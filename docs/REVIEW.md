@@ -197,3 +197,42 @@ TRL 4 remains on hold by Amish's instruction. No test articles, test plans, buil
 ### Recommended next step
 
 Amish decides item 14 (R6); the TRL 3 package is otherwise complete.
+
+## Session 2026-09-26: product appearance model and photoreal renders
+
+Amish chose this repo for the first batch of product renders on 2026-09-26. This session adds an appearance model for photoreal renders; it changes no dimension, interface, requirement, calculation or BOM line.
+
+### What was done
+
+- `cad/src/product_model.py`: `product_parts()` returns 88 named parts (50 in the "shell" group, 32 in the drive train group "internal" and 6 context parts) with colour, material, BOM line, group and exploded-view offset, built from `PARAMS`, `derived()` and the geometry of `model.py`. Frame-mounted parts are tilted back 30 degrees about the cluster shaft, as `model.tilted()` does; the clusters stay put against the first riser, as in `concept_media.py`. It adds:
+  - powder-coated frame with welded rail bends, toe plate gussets, anti-slip ribs and rounded toe plate corners;
+  - teal laser-cut tri-star spiders with lightening slots, cast hub bosses with six hub bolts and shaft end caps, grooved solid rubber tyres on light grey rims, axle caps and flange bearings with bolts;
+  - a closed chain case round both chain stages with a clear inspection window over the final stage chain, and the sprockets, chains and countershaft inside it;
+  - the worm gearmotor with a ribbed gearbox, brake housing, teal brake-release lever, rating label and cable gland;
+  - the IP54 electronics box with a lid frame, driver-side cooling ribs, lid screws, a name plate and a clear window over the controller and IMU board (a lit heartbeat light), and the motor driver board with its heat sink inside;
+  - the battery pack with a parting line, a teal release latch, a state-of-charge light bar (three segments lit), a charge port cap, a rating label and a raised wordmark, in its cradle;
+  - key switch and 40 A fuse holder, cables and cable glands;
+  - ribbed rubber grip sleeves, the dead-man lever and a control pod with an up and down rocker, a lit status light bar and a buzzer grille;
+  - UHMW nosing skids with screws, and the load strap with its ratchet round three parcel cartons.
+- Context (group "context"): a four-step stair on the design stair (196 mm risers, 254 mm oak treads with 20 mm nosings), three strapped parcel cartons on the toe plate, and the shared clay mannequin (1.75 m, "push" pose with joint overrides) standing two steps up with both hands on the grip. The hands are placed from `mannequin_landmarks()`, so they stay on the grip if the handle moves.
+- `TITLE` and `RENDER_VIEWS`: "hero" (front right, about 16 degrees elevation, with the stair and courier), "exploded" (front left, about 24 degrees, seen from the stair side so the pack, electronics box and gearmotor faces show) and "detail" (front left, about 14 degrees). The "internal" group holds the drive train (clusters, shaft, bearings, chain case and chains, gearmotor and its mounts), so the detail view frames the tri-star clusters and drive on their own.
+- `README.md`: the hero image now points to `media/render-hero.png`, and the links line starts with the exploded render. The render files are produced later by the orchestrator.
+- Self-check previews (matplotlib, clear parts left out) were reviewed in `/tmp/stepclimber-prod/`.
+
+### Where the appearance model differs from model.py
+
+Each item is **Proposed, awaiting Amish**.
+
+1. **Component mounts added.** `model.py` shows the gearmotor, electronics box and pack floating behind the rails. The appearance model adds a 3 mm component mounting panel behind the rails, a gearmotor bracket tied to the second cross bar, a sheet steel pack cradle and four enclosure standoffs. As drawn in steel they would weigh roughly 8 kg, far beyond the 0.7 kg margin on R5 (27 kg). Recommendation: treat them as illustrative only; at the next CAD revision replace them with light brackets (two flat-bar uprights or 2 mm aluminium) and carry their mass in SCM-CAL-001.
+2. **Chain case closed.** `model.py` models the guards as sprocket rings plus flat plates. The appearance model closes them into one stadium-shaped case on the same planes and radii (53.9 mm on the shaft line), caps the first stage at the gearmotor sprocket with the same 65.8 mm radius and adds a clear window in the back plate. Recommendation: adopt the closed case, since it also answers the pinch hazard; the window does not change the guard radius or R15.
+3. **Spider outline.** The rectangular arms become a rounded tri-star profile with the same 45 mm arm width and 150 mm arm length, a 46 mm hub disk, 6 mm fillets and rounded arm ends round each wheel axle. Recommendation: keep it, but check the hub disk and fillets against the 54.2 mm nosing envelope in SCM-CAL-001 before any drawing is updated.
+4. **Load strap.** `model.py` shows the strap as a flat bar across the rails at 700 mm above the shaft; the appearance model keeps that height and anchors it on the rails but wraps it round the load, with a ratchet. Recommendation: adopt for renders; no calculation depends on it.
+5. **Minor.** The motor can and brake share the 150 mm motor length (brake housing 1 mm larger in radius); the flange bearings are drawn 14 mm thick on the outer face of the axle plates instead of 16 mm overlapping them; the handle cable is routed on to the control pod; the toe plate has rounded front corners, ribs and gussets; the nosing skids are shown in black UHMW. Recommendation: accept as appearance only.
+
+### Scope and TRL
+
+This is an appearance model only: no tolerances, fabrication detail, PCB layouts or firmware. `trl` stays 3 in `project.yaml`, and TRL 4 remains on hold by Amish's instruction.
+
+### Recommended next step
+
+Amish reviews the orchestrator's renders and decides items 1 to 4 above, together with the open item 14 (R6 grip force).
