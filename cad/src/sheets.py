@@ -1,4 +1,4 @@
-"""StepClimber general arrangement sheet SCM-DWG-001 Rev P2.
+"""StepClimber general arrangement sheet SCM-DWG-001 Rev P3.
 
 Run from the repo root:  python cad/src/sheets.py
 Geometry from cad/src/model.py (upright pose); figures from docs/04-calcs/sizing.py (SCM-CAL-001).
@@ -22,13 +22,14 @@ views = project_views(asm, work)
 tilt_views = project_views(Compound(children=list(tilted(build()).values())), work / "tilt")
 
 s = Sheet(project="StepClimber", title="General arrangement", dwg_no="SCM-DWG-001",
-          rev="P2", author="Amish Chadha", date="2026-09-25",
+          rev="P3", author="Amish Chadha", date="2026-09-30",
           material="Steel frame and spiders; solid rubber wheels; see bom/bom.csv. Figures from SCM-CAL-001 v0.2",
           revisions=[("P1", "Preliminary general arrangement, TRL 3", "2026-09-25", "AC"),
-                     ("P2", "200 mm wheels, 150 mm arms, two-stage drive (SCM-DDR-002)", "2026-09-25", "AC")])
+                     ("P2", "200 mm wheels, 150 mm arms, two-stage drive (SCM-DDR-002)", "2026-09-25", "AC"),
+                     ("P3", "Layout and labels tidied", "2026-09-30", "AC")])
 s.add_ortho(views, ["front", "top", "right"])
-s.add_svg(views["iso"], 276, 30, 140, 84, label="Isometric view", sublabel="Not to scale")
-s.add_svg(tilt_views["front"], 176, 100, 60, 70, scale=1 / 20, label="Front view, climbing pose",
+s.add_svg(views["iso"], 276, 38, 140, 84, label="Isometric view", sublabel="Not to scale")
+s.add_svg(tilt_views["front"], 18, 118, 70, 66, scale=1 / 20, label="Front view, climbing pose",
           sublabel="Tilted 30 deg about the shaft; scale 1:20")
 s.add_notes("Key dimensions and interfaces (mm)", [
     f"Overall width {D['width']:.0f} (wheel outer faces); upright height {D['height_upright']:.0f}",
