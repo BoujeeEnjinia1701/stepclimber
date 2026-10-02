@@ -15,3 +15,5 @@ The total is $17 (2.6 %) under the $650 `budget_usd` in `project.yaml` and requi
 This BOM carries the cluster and drive rework decided on 2026-09-25 (SCM-DDR-002): item 2 moved to 200 mm wheels on 150 mm arms ($65 to $88) and item 3 to a two-stage chain drive with a countershaft ($50 to $80). SCM-CAL-001 v0.2 finds that both now keep clear of stair nosings (R2, R15).
 
 Shipping, taxes and tools are not included.
+
+Decided by Amish on 2026-10-02 (SCM-DEC-001, item 1): the 25 mm cluster shaft in line 3 is quenched and tempered alloy steel such as 4140 instead of 1018. The line 3 specification and price are a follow-up and are not yet in `bom.csv`.

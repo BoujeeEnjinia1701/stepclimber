@@ -3,9 +3,9 @@ doc_id: SCM-PRB-001
 title: StepClimber problem statement
 project: StepClimber
 doc_type: Problem statement
-version: "0.4"
+version: "0.5"
 status: Draft
-date: '2026-09-25'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -25,6 +25,10 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Recommendations accepted by Amish (DDR-002); budget, mass constraint and stair survey question updated for the cluster rework
+- version: "0.5"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: First user group and pilot partner type decided on 2026-10-02; mass constraint set to 35 kg for the first prototype (SCM-DEC-001, items 2, 6 and 7)
 ---
 
 # StepClimber problem statement
@@ -66,7 +70,7 @@ StepClimber aims at the gap: a motor-driven tri-star hand truck that lifts about
 ## Constraints
 
 - Garage-buildable prototype, about $650 USD in parts (budget revised from $600 by Amish on 2026-09-25, SCM-DDR-002).
-- Light enough to lift into a vehicle by one person: 27 kg or less including the battery (SCM-REQ-001 R5, revised on 2026-09-25).
+- Light enough to lift into a vehicle by one person: 35 kg or less including the battery for the first prototype (SCM-REQ-001 R5, set by Amish on 2026-10-02; 27 kg before), with savings to be tried when parts are bought.
 - Fits standard residential stairs and doors (about 760 mm (30 in) clear width) without adjustment.
 - Hold-to-run control, and the load must stay put on the stair if power, the motor or the operator's grip is lost.
 - Low-voltage (24 V class) battery with a BMS; no exposed mains.
@@ -89,7 +93,7 @@ StepClimber aims at the gap: a motor-driven tri-star hand truck that lifts about
 
 ## Open questions
 
-- Which user group first: gig couriers, a parcel company pilot, or appliance and moving crews? Proposed, awaiting Amish (SCM-DDR-001 item 9).
+- Which user group first? Decided by Amish, 2026-10-02 (SCM-DEC-001, items 6 and 7): interview parcel couriers who deliver to walk-up apartment buildings first, with gig couriers second and appliance and moving crews left out; then seek a regional parcel or last-mile delivery company, chosen from the interviews, for a small supervised pilot (the first candidate type to approach, not yet agreed).
 - What stair load do couriers need most often: 40, 60 or 80 kg? Amish decided on 2026-09-25 to rate the prototype at 60 kg until couriers are asked; interviews should confirm it.
 - How steep are the walk-up stairs in the first target city, and how far do their nosings overhang? Riser, tread and nosing survey needed: the reworked cluster (SCM-DDR-002) covers risers to about 225 mm and nosing overhangs to 32 mm, and needs treads of about 240 mm or more.
 - Would a courier accept a truck of about 26 kg in the van, or is mass the main barrier to use?
@@ -97,6 +101,6 @@ StepClimber aims at the gap: a motor-driven tri-star hand truck that lifts about
 
 ## User research
 
-- [ ] Interview couriers and drivers about stair drops, loads and current tools
+- [ ] Interview couriers and drivers about stair drops, loads and current tools (parcel couriers serving walk-up apartment buildings first, then gig couriers; SCM-DEC-001, item 6)
 - [ ] Survey riser, tread and landing sizes in a sample of walk-up buildings
 - [ ] Revise the requirements (SCM-REQ-001) from findings before freezing the design

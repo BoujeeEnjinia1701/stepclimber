@@ -3,9 +3,9 @@ doc_id: SCM-DDR-002
 title: StepClimber recommendations accepted
 project: StepClimber
 doc_type: Design decision record
-version: "0.1"
+version: "0.2"
 status: Draft
-date: '2026-09-25'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -13,12 +13,16 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Recommendations accepted by Amish (DDR-002); record the decided items, the changes made at TRL 3 and the items still open
+- version: "0.2"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: Items 9, 10 and 14 decided by Amish on 2026-10-02 as recommended in SCM-DEC-001
 ---
 
 # 0002: Recommendations accepted
 
 - **Date:** 2026-09-25
-- **Status:** accepted (items 11 to 13 of SCM-DDR-001); items 9, 10 and the new item 14 remain proposed, awaiting Amish
+- **Status:** accepted (items 11 to 13 of SCM-DDR-001); items 9, 10 and the new item 14 were decided by Amish on 2026-10-02 as recommended in the design decisions register (SCM-DEC-001, items 6, 7 and 4): "i approve your recommendations for all 555 open decisions."
 
 ## Context
 
@@ -36,13 +40,13 @@ SCM-DDR-001 left five StepClimber items open. Three of them carried a recommenda
 
 The pitch and the problem line in `project.yaml` are unchanged by these decisions.
 
-*Table 2. Items still open.*
+*Table 2. Items left open by this record, all decided on 2026-10-02.*
 
 | # | Item | Status |
 | --- | --- | --- |
-| 9 | First user group for interviews: gig couriers, a parcel company pilot, or appliance and moving crews | Proposed, awaiting Amish (no recommendation was made) |
-| 10 | Partner courier group or co-design partner | Proposed, awaiting Amish (to be chosen per area later) |
-| 14 | **New: grip force after the rework (R6).** The 150 mm arm widens the swing of the center of mass about the support wheel from plus or minus 71 to 89 mm, so the grip force is 70 N at the set angle and 111 N at the plus or minus 6 degree window edge; plus or minus 4.4 degrees would be needed for 100 N. Options: (A) keep plus or minus 6 degrees and relax R6 to 115 N until grip force is measured at TRL 4; (B) tighten the window to plus or minus 4 degrees, which risks frequent stops on uneven stairs; (C) lengthen the handle within the 1,500 mm height limit, which gains only a few percent. Recommendation: A | Proposed, awaiting Amish |
+| 9 | First user group for interviews: gig couriers, a parcel company pilot, or appliance and moving crews | **Decided by Amish, 2026-10-02:** interview parcel couriers who deliver to walk-up apartment buildings first, with gig couriers as a second group; appliance and moving crews are left out (SCM-DEC-001, item 6) |
+| 10 | Partner courier group or co-design partner | **Decided by Amish, 2026-10-02:** seek a regional parcel or last-mile delivery company willing to run a small supervised pilot, chosen from the interviews of item 6; the first candidate type to approach, not yet agreed (SCM-DEC-001, item 7) |
+| 14 | **New: grip force after the rework (R6).** The 150 mm arm widens the swing of the center of mass about the support wheel from plus or minus 71 to 89 mm, so the grip force is 70 N at the set angle and 111 N at the plus or minus 6 degree window edge; plus or minus 4.4 degrees would be needed for 100 N. Options: (A) keep plus or minus 6 degrees and relax R6 to 115 N until grip force is measured at TRL 4; (B) tighten the window to plus or minus 4 degrees, which risks frequent stops on uneven stairs; (C) lengthen the handle within the 1,500 mm height limit, which gains only a few percent. Recommendation: A | **Decided by Amish, 2026-10-02 (SCM-DEC-001, item 4), not option A:** R6 stays at 100 N and the tilt window is tightened to plus or minus 3 degrees for the first loaded trials, and widened toward plus or minus 6 degrees only when grip force is measured at 100 N or less, or operators are shown to handle the measured force safely |
 
 ## Consequences
 

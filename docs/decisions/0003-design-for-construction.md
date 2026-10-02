@@ -3,9 +3,9 @@ doc_id: SCM-DDR-003
 title: StepClimber design for construction
 project: StepClimber
 doc_type: Design decision record
-version: "0.1"
+version: "0.2"
 status: Draft
-date: '2026-10-01'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -13,12 +13,16 @@ revisions:
   date: '2026-10-01'
   author: Amish Chadha
   change: Changes that make the concept physically buildable, with the reason for each; made under Amish's 2026-09-30 instruction to make the design physically buildable; open for his review
+- version: "0.2"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: Accepted by Amish on 2026-10-02 with one exception (cluster shaft in 4140, not 1018); A1 and A2 accepted; A3 decided as a plus or minus 3 degree window for the first loaded trials
 ---
 
 # 0003: Design for construction
 
 - **Date:** 2026-10-01
-- **Status:** Draft. The changes in Table 1 were made under Amish's 2026-09-30 instruction to make the design physically buildable; open for his review. The items in Table 3 are **Proposed, awaiting Amish**.
+- **Status:** accepted with one exception. Amish, 2026-10-02: "i approve your recommendations for all 555 open decisions." This covers every change in Tables 1 and 2, as made, except that the 25 mm cluster shaft is to be made from a quenched and tempered alloy steel such as 4140 instead of 1018. A1 and A2 in Table 3 are decided as recommended; A3 is decided differently from its recommendation here (see Table 3). All are recorded in the design decisions register (SCM-DEC-001).
 
 ## Context
 
@@ -55,17 +59,19 @@ The changes keep what the truck does: the same clusters, shaft line, ratios, til
 | Drawing | SCM-DWG-001 Rev P4; making sketches SCM-DWG-101 to 109 added. | Follows the model. |
 | Documents | SCM-CAL-001 v0.3, SCM-REQ-001 v0.5, SCM-PRC-001 v0.5: mass, speed, structure, cost and nosing figures updated; R3 and R5 move to not met. | Follows the model. |
 
-*Table 3. Proposed, awaiting Amish.*
+*Table 3. Items proposed, then decided by Amish on 2026-10-02.*
 
 | # | Question | Options | Recommendation |
 | --- | --- | --- | --- |
-| A1 | R5: the constructable truck weighs 34.2 kg against 27 kg. | (a) Set R5 to 35 kg for the first prototype and weigh it at TRL 4. (b) Take mass out first: an aluminium chain case outer plate bolted to a welded steel tab (about 0.7 kg), a lighter frame bought without wheels or with a 25 mm rail (about 1 to 2 kg), lighter wheels; even so, 27 kg is unlikely. (c) A smaller payload rating, which changes R1. | (a), and try the savings in (b) when parts are bought. |
-| A2 | R3: 17 steps/min needs 260 W from a 250 W motor at the new mass. | (a) Set R3 to 16 steps/min for the first prototype. (b) Fit a 300 W class worm gearmotor (more cost, about 0.5 kg more). (c) Lower the climb speed only near the top of a flight. | (a): the controller sets the speed, so a faster motor can come later without other changes. |
-| A3 | R6, item 14 of SCM-DDR-002, now at 121 N rather than 111 N at the plus or minus 6 degree window edge. | As in SCM-DDR-002 item 14: relax R6 (now to 125 N) until the grip force is measured, tighten the window (plus or minus 3.1 degrees would meet 100 N), or lengthen the handle. | Relax R6 to 125 N until it is measured at TRL 4. |
+| A1 | R5: the constructable truck weighs 34.2 kg against 27 kg. | (a) Set R5 to 35 kg for the first prototype and weigh it at TRL 4. (b) Take mass out first: an aluminium chain case outer plate bolted to a welded steel tab (about 0.7 kg), a lighter frame bought without wheels or with a 25 mm rail (about 1 to 2 kg), lighter wheels; even so, 27 kg is unlikely. (c) A smaller payload rating, which changes R1. | (a), and try the savings in (b) when parts are bought. **Accepted 2026-10-02:** R5 is 35 kg for the first prototype. |
+| A2 | R3: 17 steps/min needs 260 W from a 250 W motor at the new mass. | (a) Set R3 to 16 steps/min for the first prototype. (b) Fit a 300 W class worm gearmotor (more cost, about 0.5 kg more). (c) Lower the climb speed only near the top of a flight. | (a): the controller sets the speed, so a faster motor can come later without other changes. **Accepted 2026-10-02:** R3 is 16 steps/min for the first prototype. |
+| A3 | R6, item 14 of SCM-DDR-002, now at 121 N rather than 111 N at the plus or minus 6 degree window edge. | As in SCM-DDR-002 item 14: relax R6 (now to 125 N) until the grip force is measured, tighten the window (plus or minus 3.1 degrees would meet 100 N), or lengthen the handle. | Relax R6 to 125 N until it is measured at TRL 4. **Decided 2026-10-02, replacing this recommendation:** R6 stays at 100 N; the tilt window is tightened to plus or minus 3 degrees for the first loaded trials, and widened toward plus or minus 6 degrees only when grip force is measured at 100 N or less, or operators are shown to handle the measured force safely. |
 
 ## Consequences
 
 - `design_state: constructable` in `project.yaml`. The build plan SCM-BLD-001 shows every component and step in pictures generated from the model (`cad/src/build_plan_media.py`). Open decisions are in the design decisions register SCM-DEC-001.
+- **Exception to the acceptance (2026-10-02).** The 25 mm cluster shaft is quenched and tempered alloy steel such as 4140, not the 1018 cold drawn bar of Table 1 and SCM-CAL-001; its 1.4 safety factor at a 3 g dropped-step load was found on 1018 with fatigue not assessed. The material change still has to be carried into the BOM, the making sketch SCM-DWG-106 and the calculation.
+- With A1 to A3 decided, R5 is 35 kg and R3 16 steps/min for the first prototype, and the tilt window is plus or minus 3 degrees for the first loaded trials (R7), which keeps the grip force at 100 N or less on paper (plus or minus 3.1 degrees gives 100 N).
 - Requirement status (SCM-CAL-001 v0.3): 7 met on paper (R1, R2, R4, R10, R11, R13, R15), 3 not met (R3, R5, R6), 4 not verifiable at TRL 3 (R7, R8, R9, R14), and R12 is reported against the value-engineering target (USD 126 over).
 - The photoreal renders (`media/render-*.png`), `media/card.png`, `media/social-preview.png` and the appearance model `cad/src/product_model.py` still show the concept drive, bearings and mounts; they need updating on Amish's Mac, where Blender is.
 - The gearmotor, flange bearings, weld-on hubs, wheels and frame are chosen at TRL 4; the sizes the model assumes for them are listed in the register to be checked when they are bought.

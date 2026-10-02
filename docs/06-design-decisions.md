@@ -3,9 +3,9 @@ doc_id: SCM-DEC-001
 title: StepClimber design decisions register
 project: StepClimber
 doc_type: Design decisions register
-version: "0.1"
+version: "0.2"
 status: Draft
-date: '2026-10-01'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -13,6 +13,10 @@ revisions:
   date: '2026-10-01'
   author: Amish Chadha
   change: Register opened with the build plan; open decisions from SCM-DDR-001 to SCM-DDR-003 and the review note; budget treated as a value-engineering target
+- version: "0.2"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: Amish approved the recommendations of open items 1 to 7 on 2026-10-02; all moved to decisions made; R5 and shaft material lines to confirm updated
 ---
 
 # StepClimber design decisions register
@@ -21,15 +25,7 @@ Every design decision still to be made, and every decision made, in one place. E
 
 ## Open decisions
 
-| # | Decision needed | Options | Recommendation | Affects in the build | Source |
-| --- | --- | --- | --- | --- | --- |
-| 1 | Review the design-for-construction changes (bearings on axle plates inside the rails, closed chain case, countershaft in two bearings, chain centres for whole chains, weld-on hubs and stub axles, component uprights, skid standoffs, lowest cross bar moved) | Accept as made; or change any of them | Accept as made | The whole build plan | SCM-DDR-003, Table 1 (P1 to P11) |
-| 2 | Truck mass (R5): the constructable truck weighs 34.2 kg against 27 kg | (a) Set R5 to 35 kg for the first prototype and weigh it at TRL 4; (b) take mass out first (aluminium case outer plate on a welded tab, a lighter frame, lighter wheels); (c) a lower payload rating | (a), trying the savings in (b) when parts are bought | None in the plan; the prototype is weighed in the first checks | SCM-DDR-003, A1 |
-| 3 | Climb speed (R3): at the new mass 17 steps/min needs 260 W from the 250 W motor | (a) Set R3 to 16 steps/min for the first prototype; (b) a 300 W class worm gearmotor; (c) slow only near the top of a flight | (a): the controller sets the speed, so a faster motor can follow later | Controller speed setting; gearmotor choice | SCM-DDR-003, A2 |
-| 4 | Grip force (R6): 121 N at the plus or minus 6 degree window edge against 100 N | (a) Keep the window and relax R6 to 125 N until grip force is measured; (b) tighten the window (plus or minus 3.1 degrees meets 100 N), which risks frequent stops; (c) lengthen the handle within 1,500 mm | (a) | Controller tilt window; handle length | SCM-DDR-002 item 14; SCM-DDR-003, A3 |
-| 5 | Appearance model and photoreal renders: bring them to the constructable design | (a) Update `cad/src/product_model.py` and re-render on Amish's Mac; (b) keep the concept renders, marked as concept | (a) | None in the build; storefront images | Review note 2026-09-26 items 1 to 5; SCM-DDR-003 |
-| 6 | First user group for interviews | Gig couriers, a parcel company pilot, or appliance and moving crews | None was made | None in the build; stair survey and load cases | SCM-DDR-001 item 9 |
-| 7 | Partner courier group or co-design partner | To be chosen per area later | None yet | None in the build | SCM-DDR-001 item 10 |
+None. All open decisions were decided on 2026-10-02.
 
 ## To confirm when parts are bought
 
@@ -42,7 +38,8 @@ Every design decision still to be made, and every decision made, in one place. E
 | 5 | The wheels: 200 mm solid rubber, 45 mm hub length, two 20 mm bore sealed bearings | The stub axle length and the overall width (588 mm) | SCM-DDR-003, P8 |
 | 6 | The sprockets: 20-tooth 08B bored 25 mm keyed; 10-tooth 08B and 35-tooth 06B bored 20 mm keyed, the 10-tooth hub no more than 27 mm across; 10-tooth 06B bored to the gearmotor shaft | The hubs must clear the chain plates | SCM-DDR-003, P6 |
 | 7 | The electronics box (about 340 x 110 x 50 mm, IP54) and the pack cradle mounting pattern | The upright hole positions | SCM-DDR-003, P9 |
-| 8 | Weigh each bought part against the mass roll-up of SCM-CAL-001 v0.3 | R5 and R3 depend on it | SCM-CAL-001 v0.3, section 9 |
+| 8 | Weigh each bought part against the mass roll-up of SCM-CAL-001 v0.3 | R5 (35 kg for the first prototype, set 2026-10-02) and R3 depend on it | SCM-CAL-001 v0.3, section 9 |
+| 9 | The 25 mm keyed cluster shaft is quenched and tempered alloy steel such as 4140, not 1018 (decided 2026-10-02), with a mill certificate | The 1.4 safety factor at a 3 g load was found for 1018; fatigue is not assessed | Decision of 2026-10-02 (open item 1); SCM-CAL-001 |
 
 ## Value engineering
 
@@ -59,5 +56,12 @@ Value-engineering target: USD 650 (a hypothetical control target, not a limit). 
 | 2026-09-25 | TRL 2 review items 1 to 8: operator-in-the-loop tilt control and the reworded pitch, fixed handle with R11 at 1,500 mm, 60 kg stair rating, tri-star clusters, self-locking worm plus spring-applied brake, 24 V LiFePO4 pack, operator always uphill, budget kept | Amish: "proceed with all of your recommendations across all batches. Make sure we don't proceed to TRL 4 on any of them." | SCM-DDR-001 |
 | 2026-09-25 | Cluster and drive rework (150 mm arms, 200 mm wheels, two-stage chain drive), plus or minus 6 degree tilt window, R3 17 steps/min, R5 27 kg, `budget_usd` 650 | Amish: "i accept all your recommendations, go with them across all repos." | SCM-DDR-002 |
 | 2026-09-25 | TRL 4 on hold for the portfolio | Amish | `project.yaml`; SCM-DDR-001 |
-| 2026-09-30 | Make the design physically buildable while drawing the build plan; keep open decisions out of the build plan | Amish: "If you are realising that the design cannot be built as per concept - fix the design assumptions to match and be physically feasible as you draw the illustrations." The changes made under this instruction are open for his review (open decision 1) | SCM-DDR-003 |
+| 2026-09-30 | Make the design physically buildable while drawing the build plan; keep open decisions out of the build plan | Amish: "If you are realising that the design cannot be built as per concept - fix the design assumptions to match and be physically feasible as you draw the illustrations." The changes made under this instruction were accepted on 2026-10-02 with one exception (below) | SCM-DDR-003 |
 | 2026-10-01 | Budgets are value-engineering targets, not limits | Amish: "the budgets are a hypothethical control target to ensure we are thinking along a value engineering lens. its ok to ensure wording reflects that the hypothesis budget was x - the real cost being accrued is y" | This register; SCM-REQ-001 R12 |
+| 2026-10-02 | Open item 1: design for construction accepted, P1 to P11 and their knock-on changes, with one exception: the 25 mm cluster shaft is made from a quenched and tempered alloy steel such as 4140 instead of 1018 | Amish: "i approve your recommendations for all 555 open decisions." | SCM-DDR-003, Table 1 (P1 to P11) |
+| 2026-10-02 | Open item 2: R5 set to 35 kg for the first prototype (34.2 kg, met on paper); the prototype is weighed at TRL 4, and the savings are tried when parts are bought | Amish: "i approve your recommendations for all 555 open decisions." | SCM-DDR-003, A1 |
+| 2026-10-02 | Open item 3: R3 set to 16 steps/min for the first prototype (the 250 W motor gives 16.3, met on paper) | Amish: "i approve your recommendations for all 555 open decisions." | SCM-DDR-003, A2 |
+| 2026-10-02 | Open item 4: grip force (R6): the tilt window is tightened to plus or minus 3 degrees for the first loaded trials, and widened toward plus or minus 6 degrees only when grip force is measured at 100 N or less, or operators are shown to handle the measured force safely. R6 stays at 100 N. This replaces the record's recommendation to relax R6 to 125 N | Amish: "i approve your recommendations for all 555 open decisions." | SCM-DDR-002 item 14; SCM-DDR-003, A3 |
+| 2026-10-02 | Open item 5: the appearance model is brought to the constructable design and re-rendered on Amish's Mac | Amish: "i approve your recommendations for all 555 open decisions." | Review note 2026-09-26 items 1 to 5; SCM-DDR-003 |
+| 2026-10-02 | Open item 6: first user group: interview parcel couriers who deliver to walk-up apartment buildings first, with gig couriers as a second group; appliance and moving crews are left out | Amish: "i approve your recommendations for all 555 open decisions." | SCM-DDR-001 item 9 |
+| 2026-10-02 | Open item 7: co-design partner: seek a regional parcel or last-mile delivery company willing to run a small supervised pilot, chosen from the interviews of item 6; the first candidate type to approach, not yet agreed | Amish: "i approve your recommendations for all 555 open decisions." | SCM-DDR-001 item 10 |

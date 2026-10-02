@@ -3,9 +3,9 @@ doc_id: SCM-BLD-001
 title: StepClimber prototype build plan
 project: StepClimber
 doc_type: Build plan
-version: "0.1"
+version: "0.2"
 status: Draft
-date: '2026-10-01'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -13,6 +13,10 @@ revisions:
   date: '2026-10-01'
   author: Amish Chadha
   change: First build plan, with pictures by component and step; design made constructable (SCM-DDR-003)
+- version: "0.2"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: 'Decisions of 2026-10-02 carried in: cluster shaft in 4140 (section 3.6), drive check at 16 steps/min, tilt stop at 3 degrees (SCM-DEC-001, items 1, 3 and 4)'
 ---
 
 # StepClimber prototype build plan
@@ -178,7 +182,7 @@ The plate stands 86 mm inside the outer plate on the two spacers, held by M8 cou
 
 *Figure 12. Cluster shaft and countershaft making sketch (SCM-DWG-106).*
 
-**What it is and what it is made from.** The cluster shaft carries both clusters and the 20-tooth final sprocket; the countershaft carries the two middle sprockets. Bought keyed bright steel shaft, 25 mm and 20 mm, with keys.
+**What it is and what it is made from.** The cluster shaft carries both clusters and the 20-tooth final sprocket; the countershaft carries the two middle sprockets. Bought keyed shaft with keys: the 25 mm cluster shaft in quenched and tempered alloy steel such as 4140 (not 1018 bright bar), with a mill certificate; the 20 mm countershaft in bright steel.
 
 **How to make it.**
 
@@ -410,9 +414,9 @@ These are the checks a TRL 4 test report would record; this plan only lists them
 | Clusters turn clear | R11, R15 | Pack out, brake released by hand as the motor maker describes; turn each cluster through a full turn | Nothing touches the frame, standoffs or skids; 15 mm or more everywhere |
 | Width and height | R11 | Tape measure, truck upright | 600 mm or less over the wheel end screws; 1,500 mm or less tall |
 | Mass | R5 | Weigh the truck with the pack | Recorded against the 34.2 kg estimate |
-| Drive and brake, unloaded | R3, R8, R9 | Wheels off the floor; pack in; hold the dead-man lever and press up, then down | Clusters turn both ways at 17 steps/min speed (one third of a turn in 3.5 s); releasing the lever stops them within 0.2 s and the brake holds |
+| Drive and brake, unloaded | R3, R8, R9 | Wheels off the floor; pack in; hold the dead-man lever and press up, then down | Clusters turn both ways at 16 steps/min speed (one third of a turn in 3.75 s); releasing the lever stops them within 0.2 s and the brake holds |
 | Hold with power off | R8 | Wheels off the floor; pack out; a 140 N·m torque on a cluster by a lever and spring balance | The cluster does not turn |
-| Tilt stop | R7 | Truck on the flat, wheels chocked, drive running; tilt the frame past 6° from the set angle and past 15° and 45° from upright | The drive stops and the buzzer sounds each time |
+| Tilt stop | R7 | Truck on the flat, wheels chocked, drive running; tilt the frame past 3° from the set angle (the window for the first loaded trials) and past 15° and 45° from upright | The drive stops and the buzzer sounds each time |
 | Push on the flat | R10 | 60 kg on the toe plate, strapped; spring balance on the grip | 40 N or less at walking pace |
 | Chain case clearance | R15 | Gauge the case on the shaft line against a 54 mm radius template | The case is inside the template all round on the stair side |
 | Charging | R13 | Charger on the pack, on the charging spot | The BMS charges to 29.2 V and stops; the pack stays under 45 °C |

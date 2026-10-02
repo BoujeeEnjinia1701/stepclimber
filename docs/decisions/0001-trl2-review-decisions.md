@@ -3,9 +3,9 @@ doc_id: SCM-DDR-001
 title: StepClimber TRL 2 review decisions
 project: StepClimber
 doc_type: Design decision record
-version: "0.2"
+version: "0.3"
 status: Draft
-date: '2026-09-25'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -17,12 +17,16 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Recommendations accepted by Amish (DDR-002)
+- version: "0.3"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: Items 9 and 10 decided by Amish on 2026-10-02 (SCM-DEC-001, items 6 and 7)
 ---
 
 # 0001: TRL 2 review decisions
 
 - **Date:** 2026-09-25
-- **Status:** accepted (items 1 to 8, and items 11 to 13 through SCM-DDR-002); items 9 and 10 remain proposed, awaiting Amish
+- **Status:** accepted (items 1 to 8, and items 11 to 13 through SCM-DDR-002); items 9 and 10 were decided by Amish on 2026-10-02 as recommended in the design decisions register (SCM-DEC-001, items 6 and 7)
 
 ## Context
 
@@ -53,14 +57,14 @@ Consequences of the cross-cutting decisions for this repo:
 
 - **SwapCell interface v0.3 items** (wake method, charge-while-discharging, latch vibration rating) do not apply, because item 6 keeps StepClimber on its own 24 V pack.
 - **Shared SwapCell pack pricing** does not apply for the same reason; the pack stays in this BOM.
-- **Co-design partners** are chosen per area later (item 10 stays open).
+- **Co-design partners** are chosen per area later (item 10 was decided on 2026-10-02: a regional parcel or last-mile delivery company for a small supervised pilot, chosen from the interviews; SCM-DEC-001, item 7).
 
 *Table 2. Items open when this record was written. Items 11 to 13 were decided later on 2026-09-25 (SCM-DDR-002).*
 
 | # | Item | Status |
 | --- | --- | --- |
-| 9 | First user group for interviews: gig couriers, a parcel company pilot, or appliance and moving crews | Proposed, awaiting Amish (no recommendation was made) |
-| 10 | Partner courier group or co-design partner | Proposed, awaiting Amish (to be chosen per area later) |
+| 9 | First user group for interviews: gig couriers, a parcel company pilot, or appliance and moving crews | **Decided by Amish, 2026-10-02:** interview parcel couriers who deliver to walk-up apartment buildings first, with gig couriers as a second group; appliance and moving crews are left out (SCM-DEC-001, item 6) |
+| 10 | Partner courier group or co-design partner | **Decided by Amish, 2026-10-02:** seek a regional parcel or last-mile delivery company willing to run a small supervised pilot, chosen from the interviews of item 6; the first candidate type to approach, not yet agreed (SCM-DEC-001, item 7) |
 | 11 | Cluster and drive rework to meet R2 and R15 (SCM-CAL-001 section 3). Options: (A) 150 mm arms, 200 mm wheels, a two-stage chain drive with an 08B 20-tooth final sprocket, and a 54 mm shaft-line envelope; this likely pushes R5 past 25 kg and R12 past $600 and needs a larger motor or 18.8 steps/min. (B) Keep the cluster, restrict R2 to square nosings and find a shaft-line drive within a 48 mm radius (none identified at 146 N·m). (C) Change to a stepping-arm or tracked mechanism, which reverses item 4. Recommendation: A, with R5, R12 and R3 revisited once the parts are priced | Decided by Amish, 2026-09-25: go with recommendation (SCM-DDR-002) |
 | 12 | Tilt window (R6, R7). Options: tighten the stop window from plus or minus 8 to plus or minus 6 degrees so the grip force stays under 100 N, or relax R6 to about 110 N. Recommendation: tighten to plus or minus 6 degrees | Decided by Amish, 2026-09-25: go with recommendation (SCM-DDR-002) |
 | 13 | Follow-on target changes if item 11 A is chosen: R5 mass, R12 budget and R3 speed or motor size | Decided by Amish, 2026-09-25: go with recommendation (SCM-DDR-002): R3 17 steps/min, R5 27 kg, R12 $650 |

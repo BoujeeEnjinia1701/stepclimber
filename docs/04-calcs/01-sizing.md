@@ -3,9 +3,9 @@ doc_id: SCM-CAL-001
 title: StepClimber sizing calculations
 project: StepClimber
 doc_type: Calculation note
-version: "0.3"
+version: "0.4"
 status: Draft
-date: '2026-10-01'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -21,13 +21,17 @@ revisions:
   date: '2026-10-01'
   author: Amish Chadha
   change: Recalculated for the constructable design (SCM-DDR-003); mass itemised, chain centres to whole chains, bearings inside the frame, frame-fixed outlines checked against the nosings; budget reported as a value-engineering target
+- version: "0.4"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: Table 10 rows R3, R5, R6 and R7, the summary and the R3, R5 and R6 text of their sections follow the 2026-10-02 decisions (SCM-DEC-001, items 1 to 4); no computed number changed
 ---
 
 # StepClimber sizing calculations
 
 This version recalculates StepClimber for the constructable design of SCM-DDR-003, made on 2026-10-01 under Amish's 2026-09-30 instruction to make the design physically buildable. The cluster, ratios, tilt window and stair geometry of SCM-DDR-002 are unchanged. What changed is that every part now exists and is fixed to its neighbours: the bearings sit inside the frame on welded axle plates, the countershaft runs in two bearings in a closed chain case, the chain centres suit whole chains, and the parts on the frame back hang on uprights. Naming every part also lets the mass be added up rather than allowed for, and the truck comes out at 34.2 kg (26.3 kg in v0.2).
 
-**Three requirements are not met.** R5: 34.2 kg against 27 kg. R3: at the new mass the climb needs 260 W at 17 steps/min from the 250 W motor, which climbs at 16.3 steps/min. R6: the grip force at the plus or minus 6 degree window edge is 121 N against 100 N. Seven are met on paper and four cannot be verified without hardware. Every frame-fixed part near the shaft clears every nosing in the R2 range by 10 mm or more (R15), the safety factors at a 3 g dropped-step load are 1.4 or more, and the pack gives about 1,215 loaded steps per charge. The estimated cost is USD 776 against the USD 650 value-engineering target.
+**Three requirements are not met.** R5: 34.2 kg against 27 kg. R3: at the new mass the climb needs 260 W at 17 steps/min from the 250 W motor, which climbs at 16.3 steps/min. R6: the grip force at the plus or minus 6 degree window edge is 121 N against 100 N. Seven are met on paper and four cannot be verified without hardware. Amish's decisions of 2026-10-02 (SCM-DEC-001, items 2 to 4) set R5 to 35 kg and R3 to 16 steps/min for the first prototype and the tilt window to plus or minus 3 degrees for the first loaded trials, so R3, R5 and R6 are met on the figures here (Table 10); the inputs, the shaft material (4140, item 1) and `results.csv` are updated at the next run of `sizing.py`. Every frame-fixed part near the shaft clears every nosing in the R2 range by 10 mm or more (R15), the safety factors at a 3 g dropped-step load are 1.4 or more, and the pack gives about 1,215 loaded steps per charge. The estimated cost is USD 776 against the USD 650 value-engineering target.
 
 Every number here is printed by `docs/04-calcs/sizing.py` (run from the repo root: `python docs/04-calcs/sizing.py`), which also writes `docs/04-calcs/results.csv`. The script reads the geometry from `cad/src/model.py` and the costs from `bom/bom.csv`. All values are first-principles estimates for a paper design; nothing is measured.
 
@@ -140,7 +144,7 @@ The 54 mm envelope takes an 08B 20-tooth sprocket (chain safety factor 4.0, sect
 
 At 17 steps/min the shaft turns at 0.593 rad/s (5.67 rpm). Lifting 924 N through 196 mm takes 181 J per step, a mean shaft torque of 86 N·m over a third of a turn.
 
-The drive torque at any instant equals the vertical load times the horizontal distance from the support wheel to the hub, plus the grip force times the vertical distance. The peak is 140 N·m static, when the hub passes level with the landed wheel (the full 150 mm arm), and 182 N·m with the 1.3 dynamics factor. That needs 108 W at the shaft and **260 W from the motor**, 4 % over its 250 W rating. **R3 is not met**: the fastest climb this motor supports at the new mass is 16.3 steps/min (17.8 in v0.2). Options are proposed in SCM-DDR-003, item A2.
+The drive torque at any instant equals the vertical load times the horizontal distance from the support wheel to the hub, plus the grip force times the vertical distance. The peak is 140 N·m static, when the hub passes level with the landed wheel (the full 150 mm arm), and 182 N·m with the 1.3 dynamics factor. That needs 108 W at the shaft and **260 W from the motor**, 4 % over its 250 W rating. **R3 is not met**: the fastest climb this motor supports at the new mass is 16.3 steps/min (17.8 in v0.2). Amish set R3 to 16 steps/min for the first prototype on 2026-10-02 (SCM-DEC-001, item 3), which this motor meets.
 
 *Table 5. Two-stage chain drive at the peak torque.*
 
@@ -191,7 +195,7 @@ During a step the hub moves relative to the wheel carrying the load: from 29 mm 
 | Widest window that meets 100 N | Plus or minus 3.1 degrees (99 N) |
 | Vertical grip force at the window edge (flat hand truck convention) | 273 N |
 
-The horizontal-force case is the relevant one: the courier stands uphill and pushes or pulls the grip, which is about 1.1 m above the support wheel. **R6 is not met by 21 %**, up from 11 % in v0.2 because the truck is heavier. The options are set out as SCM-DDR-002 item 14 and SCM-DDR-003 item A3, proposed, awaiting Amish.
+The horizontal-force case is the relevant one: the courier stands uphill and pushes or pulls the grip, which is about 1.1 m above the support wheel. At a plus or minus 6 degree window **R6 is not met by 21 %**, up from 11 % in v0.2 because the truck is heavier. Amish decided on 2026-10-02 (SCM-DEC-001, item 4) to tighten the window to plus or minus 3 degrees for the first loaded trials, which keeps the grip force at 100 N or less (plus or minus 3.1 degrees gives 100 N).
 
 Pushing on the flat takes 0.03 x 924 N = 28 N, which meets R10.
 
@@ -231,7 +235,7 @@ R1 is met statically. The shaft margin is lower than in v0.2 (1.8) because the b
 | 17 Fixings added for construction | 0.5 kg |
 | **Total** | **34.2 kg** |
 
-**R5 (27 kg or less) is not met**, by 7.2 kg. About 3.0 kg of the rise comes from itemising the drive, which v0.2 carried as a 2.5 kg allowance (the 25 mm shaft alone is 1.9 kg), and about 4.4 kg from the parts and fixings added to make the design buildable. The case plates are already thin steel and aluminium; options are proposed in SCM-DDR-003, item A1. The pack is 2.6 kg (3 kg or less, met).
+**R5 (27 kg or less) is not met**, by 7.2 kg. About 3.0 kg of the rise comes from itemising the drive, which v0.2 carried as a 2.5 kg allowance (the 25 mm shaft alone is 1.9 kg), and about 4.4 kg from the parts and fixings added to make the design buildable. The case plates are already thin steel and aluminium; Amish set R5 to 35 kg for the first prototype on 2026-10-02 (SCM-DEC-001, item 2), which the truck meets, and the savings of SCM-DDR-003 item A1 are tried when parts are bought. The pack is 2.6 kg (3 kg or less, met).
 
 From the model, the truck is 569 mm wide at the wheel faces and 588 mm over the wheel end screws, and 1,451 mm tall upright, which meets R11 (600 and 1,500 mm). A folding hinge 950 mm above the shaft (the Option C study, not adopted) would fold the truck to 1,139 mm.
 
@@ -245,9 +249,9 @@ Value-engineering target: USD 650 (`budget_usd`, a hypothetical control target, 
 
 | ID | Requirement | Target | Value | Status |
 | --- | --- | --- | --- | --- |
-| R3 | Climb speed | 17 steps/min or more at rated load | 260 W peak on a 250 W motor; 16.3 steps/min on that motor | **Not met** |
-| R5 | Truck mass | 27 kg or less; pack 3 kg or less | 34.2 kg; pack 2.6 kg | **Not met** |
-| R6 | Operator handle force | 100 N or less inside the tilt window | 121 N at the plus or minus 6 degree edge; 76 N at the set angle | **Not met** |
+| R3 | Climb speed | 16 steps/min or more at rated load for the first prototype (set 2026-10-02; was 17) | 16.3 steps/min on the 250 W motor; 260 W needed for 17 | Met on paper |
+| R5 | Truck mass | 35 kg or less for the first prototype (set 2026-10-02; was 27 kg); pack 3 kg or less | 34.2 kg; pack 2.6 kg | Met on paper |
+| R6 | Operator handle force | 100 N or less inside the tilt window (plus or minus 3 degrees for the first loaded trials, set 2026-10-02) | 100 N at plus or minus 3.1 degrees; 121 N at a plus or minus 6 degree edge; 76 N at the set angle | Met on paper at the plus or minus 3 degree window |
 | R1 | Rated stair load | 60 kg up and down; 100 kg on the flat | Safety factors 1.4 shaft, 1.5 spider, 2.6 rail at 3 g | Met |
 | R2 | Stair range | Risers 100 to 200 mm, treads 250 mm or more, nosing up to 32 mm | Landing 66 mm past the nosing at 200 mm; tread needed 240 mm; arms clear 32 mm overhangs | Met |
 | R4 | Endurance | 1,000 loaded steps up plus 1,000 down | 1,215 | Met |
@@ -256,7 +260,7 @@ Value-engineering target: USD 650 (`budget_usd`, a hypothetical control target, 
 | R13 | Battery | 24 V LiFePO4, BMS, fused, 0 to 45 °C charge window, 4 h charge | 3.5 h | Met |
 | R15 | Stair and building protection | No steel contact with stairs; skids over nosings | Shaft-line guard 53.9 mm against 54.2 mm allowed; countershaft guard clears by 80 mm; every frame-fixed outline 10 mm or more from every nosing | Met |
 | R12 | Affordable | Value-engineering target USD 650 | USD 776 | USD 126 over the target |
-| R7 | Tilt control | 100 Hz IMU, plus or minus 6 degree window, stop within 0.2 s | Control concept only | Not verifiable at TRL 3 |
+| R7 | Tilt control | 100 Hz IMU, plus or minus 3 degree window for the first loaded trials (set 2026-10-02), stop within 0.2 s | Control concept only | Not verifiable at TRL 3 |
 | R8 | Hold on any loss | Holds with power off; drift 5 mm or less in 10 min | Worm self-locking; brake margin 7.5 times | Not verifiable at TRL 3 |
 | R9 | Hold-to-run | Stops within 0.2 s of grip release | Circuit concept only | Not verifiable at TRL 3 |
 | R14 | Environment | 0 to 40 °C, IP54, rain on stoops | Enclosure concept only | Not verifiable at TRL 3 |

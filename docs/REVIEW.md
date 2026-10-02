@@ -308,3 +308,52 @@ The design changed visibly (chain case, bearings, uprights, skid standoffs, hubs
 ### Recommended next step
 
 Amish reviews SCM-DDR-003 and decides register items 1 to 4; then update the appearance model and renders on the Mac. TRL 4 remains on hold.
+
+## Session 2026-10-02: open decisions decided
+
+On 2026-10-02 Amish approved every recommendation written for the open decisions: "i approve your recommendations for all 555 open decisions." trl stays 3; nothing was built or tested.
+
+### Decisions recorded
+
+7 decisions recorded in the design decisions register (SCM-DEC-001, Decisions made, dated 2026-10-02): SCM-DDR-003 accepted with one exception, the cluster shaft in 4140 instead of 1018 (1); R5 35 kg for the first prototype (2); R3 16 steps/min for the first prototype (3); tilt window plus or minus 3 degrees for the first loaded trials, R6 kept at 100 N (4), which replaces the record's earlier recommendation to relax R6; appearance model and renders to the constructable design (5); first user group, parcel couriers serving walk-up buildings, then gig couriers (6); a regional parcel or last-mile company for a small supervised pilot (7), the first candidate type to approach and not an agreed partner.
+
+### Documents changed
+
+- `docs/06-design-decisions.md` (SCM-DEC-001 v0.2): all 7 open items moved to Decisions made; Open decisions now reads "None"; item 8 of "To confirm when parts are bought" updated and the 4140 shaft added as item 9.
+- `docs/decisions/0003-design-for-construction.md` (SCM-DDR-003 v0.2): acceptance with the 4140 shaft exception; A1 and A2 accepted, A3 decided as the tighter window; status stays Draft.
+- `docs/decisions/0002-recommendations-accepted.md` (SCM-DDR-002 v0.2): items 9, 10 and 14 recorded as decided.
+- `docs/decisions/0001-trl2-review-decisions.md` (SCM-DDR-001 v0.3): items 9 and 10 recorded as decided, including the co-design partner note.
+- `docs/01-problem.md` (SCM-PRB-001 v0.5): first user group and pilot partner type; mass constraint for the first prototype.
+- `docs/03-requirements.md` (SCM-REQ-001 v0.6): R3 set to 16 steps/min and R5 to 35 kg for the first prototype; R7 window plus or minus 3 degrees for the first loaded trials; R3, R5 and R6 now met on paper.
+- `docs/04-calcs/01-sizing.md` (SCM-CAL-001 v0.4): R3, R5, R6 and R7 rows of Table 10, the summary and the R3, R5 and R6 text follow the 2026-10-02 decisions; no computed number changed.
+- `docs/02-concept.md` (SCM-PRC-001 v0.6): R3, R5 and R6 met after the decisions; plus or minus 3 degree window; 4140 shaft; user group and pilot partner; open questions answered.
+- `docs/05-build-plan.md` (SCM-BLD-001 v0.2): cluster shaft in 4140 (section 3.6); first checks at 16 steps/min and a 3 degree tilt stop.
+- `README.md`: climb speed, tilt window and requirement sentence; the register sentence.
+- `bom/bom-notes.md`: 4140 cluster shaft noted; the BOM change is a follow-up.
+- PDFs re-rendered with `python .kit/render.py`; superseded versions removed.
+
+No CAD model, BOM quantity or price, or picture was changed. Requirement status after the decisions: ten met on paper (R3, R5 and R6 now met as set for the first prototype), four not verifiable at TRL 3 (R7, R8, R9, R14), R12 USD 126 over the value-engineering target.
+
+### Follow-up actions to carry approved decisions into the design
+
+1. Decision 1 (bom): Change BOM line 3 to a 25 mm keyed cluster shaft in quenched and tempered alloy steel such as 4140, and reprice it.
+2. Decision 1 (drawings): Update the shaft material on the making sketch SCM-DWG-106 and in `cad/src/model.py` (material and mass), and regenerate the drawing.
+3. Decision 1 (calcs): Recalculate the cluster shaft in SCM-CAL-001 for 4140 (yield and the 1.4 factor at 3 g) and add a fatigue assessment before any loaded stair trial.
+4. Decision 2 (calcs): Rerun `docs/04-calcs/sizing.py` with R5 at 35 kg, R3 at 16 steps/min (3.75 s per third of a turn) and the plus or minus 3 degree window, so `results.csv`, the inputs table and the energy and endurance figures follow the decisions.
+5. Decision 4 (docs): Set the plus or minus 3 degree window in the firmware sketch and controller notes when the firmware is written (TRL 4, on hold).
+6. Decision 5 (pictures): Bring `cad/src/product_model.py` to the constructable design (drive, bearings, mounts) and regenerate the photoreal renders, `media/card.png` and `media/social-preview.png` on Amish's Mac.
+7. Decision 3 (pictures): Update the concept media labels and blueprint key figures that show 17 steps per minute and the plus or minus 6 degree window when the media are next regenerated.
+
+### Points found in the review
+
+- Items 6 and 7 overlap (user group for interviews and co-design partner); they could be one decision.
+- Three requirements are now not met (mass, climb speed and grip force) and the cost is USD 776 against USD 650 (USD 126 over); items 2 to 4 relax or trade all three.
+- The cluster shaft's 1.4 factor at a 3 g load is on 1018 steel with fatigue not assessed; this deserves attention before any loaded stair trial.
+
+### Safety
+
+The cluster shaft is to be 4140 rather than 1018; its strength must be recalculated and its fatigue assessed before any loaded stair trial. The plus or minus 3 degree window keeps the grip force at 100 N or less on paper but may cause frequent stops on uneven stairs; it is widened only after grip force is measured. R3 and R5 are relaxed for the first prototype only.
+
+### Recommended next step
+
+Update BOM line 3 and recalculate the cluster shaft for 4140 with a fatigue check, then rerun `sizing.py` with the decided targets. TRL 4 remains on hold by Amish's instruction.

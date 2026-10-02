@@ -3,9 +3,9 @@ doc_id: SCM-REQ-001
 title: StepClimber requirements
 project: StepClimber
 doc_type: Requirements
-version: "0.5"
+version: "0.6"
 status: Draft
-date: '2026-10-01'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -29,11 +29,15 @@ revisions:
   date: '2026-10-01'
   author: Amish Chadha
   change: Status against SCM-CAL-001 v0.3 for the constructable design (SCM-DDR-003); R3 and R5 now not met; R12 reported against the value-engineering target
+- version: "0.6"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: R3 (16 steps/min) and R5 (35 kg) set for the first prototype, and the R7 tilt window tightened to plus or minus 3 degrees for the first loaded trials, by Amish on 2026-10-02 (SCM-DEC-001, items 2 to 4); R3, R5 and R6 met on paper
 ---
 
 # StepClimber requirements
 
-These requirements are checked by calculation in SCM-CAL-001 v0.3, which models the constructable design of SCM-DDR-003 (2026-10-01) on the cluster and drive Amish decided on 2026-09-25 (SCM-DDR-002). On paper, seven are met, three are not met (R3, R5, R6) and four cannot be verified without hardware; R12 is reported against the value-engineering target. Targets are still to be revised after user research (see SCM-PRB-001). Decisions are recorded in SCM-DDR-001 to SCM-DDR-003 and indexed in the design decisions register SCM-DEC-001.
+These requirements are checked by calculation in SCM-CAL-001 v0.3, which models the constructable design of SCM-DDR-003 (2026-10-01) on the cluster and drive Amish decided on 2026-09-25 (SCM-DDR-002). On paper, ten are met and four cannot be verified without hardware, after Amish's decisions of 2026-10-02 (SCM-DEC-001): R5 is 35 kg and R3 16 steps/min for the first prototype, and the tilt window is plus or minus 3 degrees for the first loaded trials, which brings R6 within 100 N. Before those decisions R3, R5 and R6 were not met; R12 is reported against the value-engineering target. Targets are still to be revised after user research (see SCM-PRB-001). Decisions are recorded in SCM-DDR-001 to SCM-DDR-003 and indexed in the design decisions register SCM-DEC-001.
 
 The **design load case** is a 60 kg (132 lb) payload on a 34.2 kg truck, 94.2 kg in total, climbing a residential stair with 196 mm (7.75 in) risers and 254 mm (10 in) treads, the steepest the US residential code allows.
 
@@ -43,11 +47,11 @@ The **design load case** is a 60 kg (132 lb) payload on a 34.2 kg truck, 94.2 kg
 | --- | --- | --- | --- | --- |
 | R1 | Rated stair load | 60 kg (132 lb) payload up and down stairs; 100 kg on the flat. Rating decided by Amish, 2026-09-25 | Met: safety factors 1.4 (shaft), 1.5 (spider), 2.6 (rail) at a 3 g dropped-step load; fatigue not assessed | Proof load |
 | R2 | Stair range | Straight flights with risers 100 to 200 mm, treads 250 mm or more and nosing overhang up to 32 mm | Met: lands 66 mm past a square nosing at a 200 mm riser (climbs to 225 mm), needs 240 mm of tread at most, and the arms clear 32 mm overhangs | Stair survey; trial climbs |
-| R3 | Climb speed | 17 steps/min or more, up and down, at rated load. Revised from 20 steps/min by Amish, 2026-09-25 (SCM-DDR-002) | **Not met:** 260 W peak motor output on a 250 W motor at the 34.2 kg constructable mass; the motor climbs at 16.3 steps/min. Options in SCM-DDR-003 item A2, proposed, awaiting Amish | Timed climb |
+| R3 | Climb speed | 16 steps/min or more, up and down, at rated load, for the first prototype. Set by Amish on 2026-10-02 (SCM-DEC-001, item 3); revised from 20 to 17 steps/min on 2026-09-25 (SCM-DDR-002) | Met on paper: the 250 W motor climbs at 16.3 steps/min at the 34.2 kg constructable mass (it needs 260 W for 17) | Timed climb |
 | R4 | Endurance | 1,000 or more loaded steps up plus 1,000 down per charge | Met: 1,215 | Logged use |
-| R5 | Truck mass | 27 kg or less with battery; battery removable and 3 kg or less. Revised from 25 kg by Amish, 2026-09-25 (SCM-DDR-002) | **Not met:** 34.2 kg (pack 2.6 kg, met). Options in SCM-DDR-003 item A1, proposed, awaiting Amish | Weighing |
-| R6 | Operator handle force | 100 N or less at the grip while climbing inside the tilt window (R7) | **Not met:** 121 N at the plus or minus 6 degree window edge; 76 N at the set angle. Options in SCM-DDR-002 item 14 and SCM-DDR-003 item A3, proposed, awaiting Amish | Force gauge |
-| R7 | Tilt control | IMU measures frame angle at 100 Hz or faster; the controller stores the balance angle when a climb starts, shapes motor speed to keep the angle within plus or minus 6 degrees of it, and stops and alerts within 0.2 s if the angle leaves that window or the range 15 to 45 degrees back from vertical. Window tightened from 8 degrees by Amish, 2026-09-25 (SCM-DDR-002) | Not verifiable at TRL 3 (control concept only) | Bench test |
+| R5 | Truck mass | 35 kg or less with battery for the first prototype; battery removable and 3 kg or less. Set by Amish on 2026-10-02 (SCM-DEC-001, item 2); revised from 25 to 27 kg on 2026-09-25 (SCM-DDR-002) | Met on paper: 34.2 kg (pack 2.6 kg); weighed at TRL 4, with savings tried when parts are bought | Weighing |
+| R6 | Operator handle force | 100 N or less at the grip while climbing inside the tilt window (R7) | Met on paper with the plus or minus 3 degree window of R7 for the first loaded trials (plus or minus 3.1 degrees gives 100 N); 121 N at a plus or minus 6 degree edge; 76 N at the set angle. Decided by Amish on 2026-10-02 (SCM-DEC-001, item 4) | Force gauge |
+| R7 | Tilt control | IMU measures frame angle at 100 Hz or faster; the controller stores the balance angle when a climb starts, shapes motor speed to keep the angle within plus or minus 3 degrees of it for the first loaded trials, and stops and alerts within 0.2 s if the angle leaves that window or the range 15 to 45 degrees back from vertical. The window is widened toward plus or minus 6 degrees only when grip force is measured at 100 N or less, or operators are shown to handle the measured force safely. Set by Amish on 2026-10-02 (SCM-DEC-001, item 4); tightened from 8 to 6 degrees on 2026-09-25 (SCM-DDR-002) | Not verifiable at TRL 3 (control concept only) | Bench test |
 | R8 | Hold on any loss | Load holds on the stair with power off, grip released, battery removed or any fault; drift 5 mm or less in 10 min at rated load | Not verifiable at TRL 3: worm statically self-locking (back-drive efficiency -0.22) and brake margin 7.5 times, but drift needs a test | Hold test |
 | R9 | Hold-to-run | Motion only while the dead-man grip is held and a direction is selected; release stops the clusters within 0.2 s | Not verifiable at TRL 3 (circuit concept only) | Bench test |
 | R10 | Flat rolling | Push force 40 N or less at rated load on a smooth floor at walking pace, with the clusters parked | Met: 28 N | Pull test |
@@ -59,9 +63,9 @@ The **design load case** is a 60 kg (132 lb) payload on a 34.2 kg truck, 94.2 kg
 
 ## Requirements not met or at risk
 
-- **R5 is not met** by 7.2 kg. Making the design buildable named every part: the drive, carried at TRL 3 as a 2.5 kg allowance, weighs 5.5 kg itemised, and the axle plates, chain case, stub axles, uprights, standoffs and fixings add 4.4 kg (SCM-DDR-003). Options are proposed, awaiting Amish (SCM-DDR-003 item A1).
-- **R3 is not met** by 4 %: the heavier truck needs 260 W at 17 steps/min. Options are proposed, awaiting Amish (SCM-DDR-003 item A2).
-- **R6 is not met** by 21 % at the plus or minus 6 degree window edge (121 N). Options (relax R6, tighten the window, or lengthen the handle) are proposed, awaiting Amish (SCM-DDR-002 item 14, SCM-DDR-003 item A3).
+- **R5** was not met against 27 kg, by 7.2 kg; it is met against the 35 kg set for the first prototype on 2026-10-02, with 0.8 kg to spare on estimated masses. Making the design buildable named every part: the drive, carried at TRL 3 as a 2.5 kg allowance, weighs 5.5 kg itemised, and the axle plates, chain case, stub axles, uprights, standoffs and fixings add 4.4 kg (SCM-DDR-003). The savings in SCM-DDR-003 item A1 are to be tried when parts are bought.
+- **R3** was not met by 4 % at 17 steps/min (260 W needed from a 250 W motor); it is met at the 16 steps/min set for the first prototype on 2026-10-02, with 0.3 steps/min to spare.
+- **R6** is met on paper only with the plus or minus 3 degree window set on 2026-10-02 for the first loaded trials; at plus or minus 6 degrees it is 21 % over (121 N). A tight window may cause frequent stops on uneven stairs; it is widened only after grip force is measured.
 - **R15 is met with no spare radius:** the chain case is sized to its envelope on the shaft line (10.3 mm from the nearest nosing against 10 mm wanted). A bent case or a stair outside the R2 range could still be struck.
 - **R12:** the estimated cost is USD 126 over the USD 650 value-engineering target; the main cost drivers are in SCM-DEC-001.
 - R7, R8, R9 and R14 depend on control, brake and enclosure behavior that needs hardware to verify.
