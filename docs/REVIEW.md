@@ -242,3 +242,69 @@ Amish reviews the orchestrator's renders and decides items 1 to 4 above, togethe
 - Kit 1.5.0 synced: STANDARDS v1.5 (sections 12 to 15: product renders, storefront images and image quality, public release, authorship and signing), `.kit/cards.py`, `.kit/image_qc.py`, `.kit/release_gate.py`, issue templates, and the `/render-product` and `/release` commands. `CLAUDE.md` now matches `.kit/CLAUDE.md`.
 - Every `media/render-*.png` recaptioned from its original render with the new layout: the title, concept label and repository sit in a band above the render and the view note in a band below it, each line wrapped to the image width, so no text overlaps other text or the render or runs off the image. `media/card.png` and `media/social-preview.png` regenerated with the same rules.
 - `python .kit/image_qc.py` and `python .kit/release_gate.py` pass. trl stays 3.
+
+## Session 2026-10-01: constructable design and prototype build plan (kit 1.7.0)
+
+Amish approved the build plan format on 2026-09-30 and asked for it in every repo, with outstanding decisions kept in a separate design decisions register; on 2026-09-30 he also wrote: "If you are realising that the design cannot be built as per concept - fix the design assumptions to match and be physically feasible as you draw the illustrations." This session installed kit 1.7.0, made StepClimber constructable under that instruction and wrote the illustrated build plan. TRL stays at 3.
+
+### What was done
+
+- Kit 1.7.0 installed (`.kit/`, `.claude/commands/`); `CLAUDE.md` copied from `.kit/CLAUDE.md`.
+- `cad/src/model.py` rebuilt as a component model (`build_components()`, 40 components) with 90 build123d constructability checks (`python cad/src/model.py --check`), all passing, including the clusters turned through a third of a turn against every frame part. `build()` and `tilted()` keep the concept-media grouping. STEP and STL re-exported.
+- `docs/decisions/0003-design-for-construction.md` (SCM-DDR-003 v0.1, Draft): every change, made under Amish's 2026-09-30 instruction to make the design physically buildable; open for his review.
+- `docs/04-calcs/sizing.py` and `01-sizing.md` (SCM-CAL-001 v0.3): itemised mass, chain centres for whole chains, shaft overhang from the new bearing positions, and a new check of every frame-fixed outline near the shaft against every stair nosing; `results.csv` rewritten.
+- `bom/bom.csv`: lines 1 to 3 and 13 respecified and repriced; lines 14 to 17 added (axle plates and chain case, component uprights, frame modification steel, fixings).
+- `cad/src/build_plan_media.py`: overview, making sketches SCM-DWG-101 to 109, a hole layout of the three plates, 8 joint close-ups, 16 assembly step pictures and a block wiring diagram (`docs/05-build-plan/`, `cad/drawings/`).
+- `docs/05-build-plan.md` (SCM-BLD-001 v0.1) and `docs/06-design-decisions.md` (SCM-DEC-001 v0.1).
+- SCM-DWG-001 general arrangement moved to Rev P4; concept media regenerated from the new model.
+- `cad/src/svg_fix.py`: a local workaround, imported by `sheets.py` and `concept_media.py`, for a build123d SVG export failure on the climbing-pose projection (a full ellipse not flagged as closed made svgpathtools stop with an AssertionError). Such an ellipse is drawn as a fine polyline. Reported as a kit issue; `.kit/` is unchanged.
+- `docs/pdf/` regenerated for all nine controlled documents; `python .kit/drawing.py --check-text` finds no text overlaps on any sheet or the concept blueprint.
+- SCM-REQ-001 v0.5 and SCM-PRC-001 v0.5 updated; `project.yaml` gains `design_state: constructable` and the three new documents in `trl_evidence`; README links line and a "Building the prototype" section.
+
+### Design changes made for construction (SCM-DDR-003)
+
+1. Bearings moved inside the rails onto two welded axle plates (plain side 4 mm steel; drive side the 3 mm steel outer plate of the chain case); shaft overhang 48 to 93 mm.
+2. Countershaft carried in two 20 mm flange bearings, one on each chain case plate, in slots for chain tension.
+3. Closed chain case (outer plate, 3 mm aluminium inner plate on two spacers, 1.5 mm aluminium band) in place of the loose guards, with the same radii on the shaft line (53.9 mm) and round the countershaft (65.8 mm).
+4. Lowest cross bar (60 mm above the shaft line, through the chain) cut off and replaced 105 mm below the shaft line.
+5. Countershaft and gearmotor output moved 15 mm toward the stair so nothing stands in front of the rails.
+6. Chain centres set for whole chains: 38 links of 08B (countershaft 143.9 mm up), 54 links of 06B (gearmotor 289 mm up).
+7. Worm gearmotor redrawn with the motor at right angles, standing up the frame; gearbox face bolted to the case inner plate.
+8. Spiders carry 1610 weld-on taper-lock hubs and welded 20 mm stub axles; wheels on two bearings with spacer, washer and M10 end screw; 96 mm spider centre disc.
+9. Two aluminium component uprights bolted through the cross bars carry the electronics box (raised 30 mm to clear the motor), fuse box and pack cradle.
+10. Skids shortened to the 500 mm in the BOM, moved to 200 mm off centre on four welded square-tube standoffs; face still 100 mm behind the shaft line.
+11. Handle pod clamped to the grip, strap hooked round the rails, harness routed connector to connector.
+
+### Key results (SCM-CAL-001 v0.3)
+
+| Quantity | Value | Requirement |
+| --- | --- | --- |
+| Truck mass | 34.2 kg (was 26.3 kg): drive itemised at 5.5 kg (was a 2.5 kg allowance); parts added 3.9 kg plus 0.5 kg of fixings | **R5 not met** (27 kg) |
+| Peak motor output at 17 steps/min | 260 W on a 250 W motor; 16.3 steps/min on that motor | **R3 not met** |
+| Grip force at the plus or minus 6 degree window edge | 121 N | **R6 not met** (100 N) |
+| Loaded steps per charge | 1,215 | R4 met |
+| Safety factors at 3 g | Shaft 1.4 (was 1.8), spider 1.5, rail 2.6 | R1 met |
+| Width over the wheel end screws; height | 588 mm; 1,451 mm | R11 met |
+| Nearest nosing to any frame-fixed outline | 10.3 mm (chain case) against 10 mm wanted | R15 met, no spare |
+| Cost | Value-engineering target: USD 650. Estimated cost of the constructable design: USD 776 (USD 126 over the target) | R12 against target |
+
+Requirement status: 7 met on paper, 3 not met (R3, R5, R6), 4 not verifiable at TRL 3, R12 reported against the value-engineering target.
+
+### Proposed, awaiting Amish
+
+All open decisions are in `docs/06-design-decisions.md`: review of the SCM-DDR-003 changes; R5 (recommend 35 kg for the first prototype, try the savings when buying); R3 (recommend 16 steps/min for the first prototype); R6 (recommend 125 N until measured); bringing the appearance model and renders to the constructable design; first user group; partner courier group.
+
+### Stale media (to regenerate on Amish's Mac)
+
+The design changed visibly (chain case, bearings, uprights, skid standoffs, hubs and motor), so `media/render-hero.png`, `media/render-exploded.png`, `media/render-detail.png`, `media/card.png`, `media/social-preview.png` and the appearance model `cad/src/product_model.py` (which still builds the concept mounts) are stale. They were not regenerated here.
+
+### Safety concerns
+
+- The chain case sits at the edge of its nosing envelope (10.3 mm against 10 mm); a bent case or a stair outside the R2 range could be struck.
+- The shaft safety factor falls to 1.4 at 3 g with the bearings inside the frame; fatigue of the keyed shaft and the welded frame is still not assessed.
+- The heavier truck raises the grip force to 121 N at the window edge.
+- Runaway and tip-over with the courier uphill, worm creep, pinch points (now enclosed in the chain case) and the 256 Wh pack remain as before; the build plan carries welding and pack safety stops.
+
+### Recommended next step
+
+Amish reviews SCM-DDR-003 and decides register items 1 to 4; then update the appearance model and renders on the Mac. TRL 4 remains on hold.

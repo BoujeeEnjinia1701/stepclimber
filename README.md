@@ -2,13 +2,13 @@
 
 ![TRL 3](https://img.shields.io/badge/TRL-3%20of%209-0F766E) ![Hardware: CERN-OHL-S-2.0](https://img.shields.io/badge/hardware-CERN--OHL--S--2.0-111827) ![Software: MIT](https://img.shields.io/badge/software-MIT-111827) [![DOI](https://zenodo.org/badge/1386426286.svg)](https://zenodo.org/badge/latestdoi/1386426286) [![REUSE compliant](https://github.com/BoujeeEnjinia1701/stepclimber/actions/workflows/reuse.yml/badge.svg)](https://github.com/BoujeeEnjinia1701/stepclimber/actions/workflows/reuse.yml) [![Archived in Software Heritage](https://archive.softwareheritage.org/badge/origin/https://github.com/BoujeeEnjinia1701/stepclimber/)](https://archive.softwareheritage.org/browse/origin/?origin_url=https://github.com/BoujeeEnjinia1701/stepclimber)
 
-**Area:** Mobility and Logistics · **TRL:** 3 of 9 (proof of concept on paper) · **Prototype budget:** about $650 USD · **Difficulty:** 3 of 5
+**Area:** Mobility and Logistics · **TRL:** 3 of 9 (proof of concept on paper) · **Value-engineering target:** USD 650 (estimated cost USD 776) · **Difficulty:** 3 of 5
 
 Motor-assisted hand truck on tri-star wheel clusters that climb stairs one step at a time, with a tilt sensor that helps the courier hold the load angle steady.
 
 ![StepClimber: motor-assisted stair-climbing hand truck, product render](media/render-hero.png)
 
-[Exploded render](media/render-exploded.png) · [Detail render](media/render-detail.png) · [Interactive 3D model](media/viewer.html) · [Concept blueprint (PDF)](media/concept-blueprint.pdf) · [General arrangement (PDF)](cad/drawings/SCM-DWG-001.pdf) · [Sizing calculations](docs/04-calcs/01-sizing.md) · [Review note](docs/REVIEW.md)
+[Exploded render](media/render-exploded.png) · [Detail render](media/render-detail.png) · [Interactive 3D model](media/viewer.html) · [Concept blueprint (PDF)](media/concept-blueprint.pdf) · [General arrangement (PDF)](cad/drawings/SCM-DWG-001.pdf) · [Sizing calculations](docs/04-calcs/01-sizing.md) · [Prototype build plan](docs/05-build-plan.md) · [Design decisions](docs/06-design-decisions.md) · [Review note](docs/REVIEW.md)
 
 ## Concept rationale
 
@@ -54,7 +54,7 @@ Last-mile couriers carry heavy parcels up stairs to walk-up apartments by hand, 
 
 ## Concept
 
-A steel hand truck on a pair of powered tri-star wheel clusters with 200 mm wheels. A 24 V worm gearmotor with a spring-applied brake turns the clusters, through a two-stage chain drive, one third of a turn per step, lifting 60 kg (132 lb) of parcels up a residential stair at 17 steps per minute while the courier steadies the handle. An IMU on the frame slows the climb and stops it if the tilt angle leaves a plus or minus 6 degree window, so the courier can hold the load at its balance point. The TRL 3 calculations give about 1,330 loaded steps per charge from a 256 Wh LiFePO4 pack, a 26.3 kg truck and $633 in parts, and keep every steel part clear of stair nosings up to 32 mm overhang. One requirement is not yet met: the grip force at the edge of the tilt window is 111 N against 100 N, and options are proposed for review. All figures are paper calculations, not measurements.
+A steel hand truck on a pair of powered tri-star wheel clusters with 200 mm wheels. A 24 V worm gearmotor with a spring-applied brake turns the clusters, through a two-stage chain drive, one third of a turn per step, lifting 60 kg (132 lb) of parcels up a residential stair at 17 steps per minute while the courier steadies the handle. An IMU on the frame slows the climb and stops it if the tilt angle leaves a plus or minus 6 degree window, so the courier can hold the load at its balance point. The TRL 3 calculations for the constructable design give about 1,215 loaded steps per charge from a 256 Wh LiFePO4 pack and keep every steel part clear of stair nosings up to 32 mm overhang. Three requirements are not yet met: the truck weighs 34.2 kg against 27 kg, the 250 W motor climbs 16.3 rather than 17 steps per minute at that mass, and the grip force at the edge of the tilt window is 121 N against 100 N; options are proposed for review. The estimated parts cost is USD 776 against a USD 650 value-engineering target. All figures are paper calculations, not measurements.
 
 Full design precis: [docs/02-concept.md](docs/02-concept.md)
 
@@ -62,13 +62,19 @@ Full design precis: [docs/02-concept.md](docs/02-concept.md)
 
 - Steel hand truck frame with toe plate
 - Tri-star wheel clusters (pair), 150 mm arms and 200 mm solid rubber wheels
-- Cluster shaft with a 7:1 two-stage chain drive (06B, then 08B)
+- Cluster shaft with a 7:1 two-stage chain drive (06B, then 08B) in a closed chain case
 - 24 V worm gearmotor with spring-applied brake
 - Motor driver and controller with IMU tilt sensor
 - 24 V LiFePO4 pack, 10 Ah, with BMS
 - Handle with dead-man grip and up and down switch
 
 The working bill of materials is in [bom/bom.csv](bom/bom.csv).
+
+## Building the prototype
+
+The [prototype build plan](docs/05-build-plan.md) (a plan, not yet built) shows how to build the first StepClimber component by component, with a making sketch for every made part, close-ups of the joints and a picture for every assembly step. The bought hand truck gets two welded axle plates, a closed chain case that carries the countershaft and the worm gearmotor, skid standoffs and two aluminium uprights for the electronics and pack; the clusters are laser-cut spiders with weld-on hubs and stub axles. Making the concept buildable changed several parts, recorded in [SCM-DDR-003](docs/decisions/0003-design-for-construction.md); open decisions are in the [design decisions register](docs/06-design-decisions.md).
+
+![StepClimber prototype: every component, pulled apart and numbered in build order](docs/05-build-plan/overview.png)
 
 ## Safety
 

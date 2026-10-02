@@ -17,6 +17,7 @@ sys.path.insert(0, str(HERE))
 from build123d import Box, Pos, Rot  # noqa: E402
 from concept import Part, render_all  # noqa: E402
 from model import PARAMS as P, build, tilted, derived  # noqa: E402
+import svg_fix  # noqa: E402,F401  (SVG export workaround)
 
 D = derived()
 S = tilted(build())
@@ -34,6 +35,7 @@ parts = [
     Part("Handle with dead-man grip", S["handle"], "#2563EB", 9, (-160, 0, 300)),
     Part("Load strap with ratchet", S["strap"], "#EAB308", 10, (480, 0, 120)),
     Part("Nosing guard skids", S["skids"], "#94A3B8", 11, (-60, -300, -330)),
+    Part("Component uprights", S["uprights"], "#A8A29E", 15, (-200, 300, 450)),
 ]
 
 # ---------------- context for the hero only ----------------
@@ -55,14 +57,14 @@ render_all(
     parts, project="StepClimber", title="Powered tri-star hand truck concept", dwg_no="SCM-DWG-010",
     key_figures=["Rated stair load 60 kg (132 lb) payload (decided)",
                  "Tri-star clusters: 200 mm wheels, 150 mm arms, 260 mm spacing",
-                 "One step per 1/3 turn; 17 steps/min at 238 W peak (calc)",
-                 "527 J (0.15 Wh) from the pack per loaded step up (calc)",
-                 "About 1,330 loaded steps per 256 Wh charge (calc)",
-                 "26.3 kg truck; $633 parts; R6 not met (SCM-CAL-001 v0.2)"],
-    cut=False, context=context, date="2026-09-25",
-    flow={"title": "energy for one loaded step up, J per step (calculated: 86 kg, 196 mm riser)", "unit": "J",
-          "stages": [("Pack output", 527), ("Driver output", 500), ("Motor shaft", 400),
-                     ("Worm output", 180), ("Lift at clusters", 166)],
-          "losses": [(0, "Driver (5 %)", 26), (1, "Motor (20 %)", 100),
-                     (2, "Self-locking worm (55 %)", 220), (3, "Chains (8 %)", 14)]},
+                 "One step per 1/3 turn; 260 W peak at 17 steps/min (calc)",
+                 "575 J (0.16 Wh) from the pack per loaded step up (calc)",
+                 "About 1,215 loaded steps per 256 Wh charge (calc)",
+                 "34.2 kg truck; R3, R5, R6 not met (SCM-CAL-001 v0.3)"],
+    cut=False, context=context, date="2026-10-01",
+    flow={"title": "energy for one loaded step up, J per step (calculated: 94 kg, 196 mm riser)", "unit": "J",
+          "stages": [("Pack output", 575), ("Driver output", 546), ("Motor shaft", 437),
+                     ("Worm output", 197), ("Lift at clusters", 181)],
+          "losses": [(0, "Driver (5 %)", 29), (1, "Motor (20 %)", 109),
+                     (2, "Self-locking worm (55 %)", 240), (3, "Chains (8 %)", 16)]},
 )

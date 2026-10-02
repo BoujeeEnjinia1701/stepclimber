@@ -1,4 +1,4 @@
-"""StepClimber sizing calculations, SCM-CAL-001 v0.2 (TRL 3, cluster and drive rework decided 2026-09-25, SCM-DDR-002).
+"""StepClimber sizing calculations, SCM-CAL-001 v0.3 (TRL 3, constructable design, SCM-DDR-003).
 
 Run from the repo root:  python docs/04-calcs/sizing.py
 Prints every number quoted in docs/04-calcs/01-sizing.md and writes docs/04-calcs/results.csv.
@@ -19,7 +19,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "cad/src"))
-from model import PARAMS as P, derived  # noqa: E402  (parameters only; build123d is not imported)
+from model import PARAMS as P, derived, case_outline, axle_plate_outline, flange_outline, BRG  # noqa: E402  (no build123d)
 
 D = derived()
 G = 9.81
@@ -37,11 +37,45 @@ def head(t):
 
 # ---------------------------------------------------------------- 1. Assumptions
 M_PAYLOAD = 60.0            # kg, rated stair load (R1, decided 2026-09-25)
-MASS = {                    # kg, truck mass roll-up (BOM item numbers)
-    "1 frame and toe plate": 8.0, "2 clusters (pair)": 5.5, "3 shaft, countershaft, bearings, sprockets, chains, guards": 2.5,
+STEEL, ALU = 7.85e-6, 2.70e-6   # kg/mm3
+
+
+def made_masses():
+    """Masses (kg) of the parts added or itemised to make the design buildable (SCM-DDR-003), from the
+    model outlines and stock sizes. Holes are ignored, which is conservative."""
+    py0, py1 = P["plate_y"]; iy0, iy1 = P["inner_y"]
+    outline = case_outline()
+    m = {
+        "axle plate, plain side (4 mm steel)": axle_plate_outline().area * (P["axle_plate_y"][1] - P["axle_plate_y"][0]) * STEEL,
+        "case outer plate (3 mm steel)": outline.area * (py1 - py0) * STEEL,
+        "case inner plate (3 mm aluminium)": outline.area * (iy1 - iy0) * ALU,
+        "case band (1.5 mm aluminium)": outline.length * (py0 - iy1) * P["band_t"] * ALU,
+        "case spacers (2, 16 mm bar)": 2 * math.pi * P["spacer_r"] ** 2 * (py0 - iy1) * STEEL,
+        "component uprights (2, aluminium 30 x 6)": 2 * P["up_w"] * P["up_t"] * (P["bars"][2] - P["bars"][0] + 2 * P["bar_r"]) * ALU,
+        "skid standoffs (4, 20 x 20 x 1.5 tube)": 4 * (20 * 20 - 17 * 17) * (P["rail_x"] - P["skid_x"] - 10) * STEEL,
+        "stub axles (6, 20 mm bar)": 6 * math.pi * P["stub_r"] ** 2 * 55 * STEEL,
+    }
+    return m
+
+
+MADE = made_masses()
+# Shafts, bearings, sprockets and chains itemised from catalogue-class masses (SCM-DDR-003, P11);
+# the TRL 3 concept carried a 2.5 kg allowance for this group.
+DRIVE = {"cluster shaft 25 x 490": math.pi * 12.5 ** 2 * 2 * P["shaft_half"] * STEEL,
+         "countershaft 20 x 124": math.pi * 10 ** 2 * 124 * STEEL,
+         "two 25 mm two-bolt flange bearings": 2 * 0.60, "two 20 mm two-bolt flange bearings": 2 * 0.45,
+         "four sprockets": 0.70, "two chains": 0.55}
+MASS = {                    # kg, truck mass roll-up (BOM line numbers)
+    "1 frame and toe plate (as bought; replacement low bar replaces the bar cut off)": 8.0,
+    "2 clusters (pair)": 5.5, "2 stub axles": MADE["stub axles (6, 20 mm bar)"],
+    "3 shafts, bearings, sprockets, chains": sum(DRIVE.values()),
     "4 worm gearmotor with brake": 4.5, "5 and 6 driver, controller, IMU": 0.8, "7 pack and cradle": 2.6,
     "8 switch, fuse, harness": 0.5, "9 handle controls": 0.6, "10 strap": 0.4, "11 skids": 0.4,
     "13 enclosure and hardware": 0.5,
+    "14 axle plates and chain case": sum(v for k, v in MADE.items() if k.startswith(("axle", "case"))),
+    "15 component uprights": MADE["component uprights (2, aluminium 30 x 6)"],
+    "16 skid standoffs": MADE["skid standoffs (4, 20 x 20 x 1.5 tube)"],
+    "17 fixings added for construction": 0.5,
 }
 H_CG = 500.0                # mm, combined center of mass above the shaft, along the frame
 STEPS_PER_MIN = 17.0        # R3, revised 2026-09-25 (SCM-DDR-002) to keep the 250 W motor
@@ -69,7 +103,7 @@ KT_KEY = 2.0                # keyway stress concentration
 SHOCK = 3.0                 # dropped-step dynamic factor
 CHAIN_BREAK = {"06B": (9.525, 8.9e3), "08B": (12.7, 17.8e3)}   # pitch mm, ISO 606 minimum tensile N
 R5_MAX = 27.0               # kg, R5 truck mass, revised 2026-09-25 (SCM-DDR-002)
-BUDGET = 650.0              # USD, budget_usd revised 2026-09-25 (SCM-DDR-002)
+BUDGET = 650.0              # USD, value-engineering target (budget_usd), set 2026-09-25 (SCM-DDR-002)
 
 a, r = P["arm"], P["wheel_r"]
 d = D["spacing"]
@@ -207,16 +241,55 @@ rec("guard_radius_mm", round(D["guard_r"], 1), "mm"); rec("guard_margin_n32_mm",
 
 # Countershaft guard (fixed to the frame, cs_z up the frame from the shaft) against every nosing
 u = (-math.sin(math.radians(TILT)), math.cos(math.radians(TILT)))       # up the frame
+nx = (math.cos(math.radians(TILT)), math.sin(math.radians(TILT)))       # toward the load side of the frame
 cs_min = 1e9
 for h in RISERS:
     for n in NOSE:
         for ph, piv, hub, wheels in climb_states(h, n):
-            c_s = (hub[0] + P["cs_z"] * u[0], hub[1] + P["cs_z"] * u[1])
+            c_s = (hub[0] + P["cs_z"] * u[0] + P["cs_x"] * nx[0], hub[1] + P["cs_z"] * u[1] + P["cs_x"] * nx[1])
             for c in [(n, h), (n - T_DESIGN, 2 * h), (n - 2 * T_DESIGN, 3 * h)]:
                 cs_min = min(cs_min, math.hypot(c_s[0] - c[0], c_s[1] - c[1]))
-print(f"Countershaft {P['cs_z']:.0f} mm up the frame: nearest nosing {cs_min:.0f} mm; guard radius {D['cs_guard_r']:.0f} mm; "
+print(f"Countershaft {P['cs_z']:.0f} mm up the frame and {-P['cs_x']:.0f} mm toward the stair: nearest nosing {cs_min:.0f} mm; guard radius {D['cs_guard_r']:.0f} mm; "
       f"clearance {cs_min - D['cs_guard_r']:.0f} mm")
 rec("countershaft_nosing_clear_mm", round(cs_min - D["cs_guard_r"]), "mm")
+
+# Frame-fixed outlines near the shaft (constructable design, SCM-DDR-003) against every nosing, in the
+# frame's own coordinates (x toward the load side, z up the frame from the shaft line)
+from shapely.geometry import Point as _Pt, box as _sbox  # noqa: E402
+from shapely import affinity as _aff  # noqa: E402
+noses = []
+for h in RISERS:
+    for n in NOSE:
+        for ph, piv, hub, wheels in climb_states(h, n):
+            for c in [(n, h), (n - T_DESIGN, 2 * h), (n - 2 * T_DESIGN, 3 * h)]:
+                v = (c[0] - hub[0], c[1] - hub[1])
+                noses.append((v[0] * nx[0] + v[1] * nx[1], v[0] * u[0] + v[1] * u[1]))
+g5, g4 = BRG["205"], BRG["204"]
+gx, _, gzz = P["gm_box"]
+OUTLINES = [
+    ("Chain case and drive-side axle plate", case_outline()),
+    ("Plain-side axle plate", axle_plate_outline()),
+    ("Main flange bearing", flange_outline(g5["bolt"], g5["r_mid"], g5["r_end"])),
+    ("Countershaft flange bearing", _aff.translate(flange_outline(g4["bolt"], g4["r_mid"], g4["r_end"]), P["cs_x"], P["cs_z"])),
+    ("Gearmotor gearbox", _sbox(P["cs_x"] - gx / 2, P["gm_z"] - gzz / 2, P["cs_x"] + gx / 2, P["gm_z"] + gzz / 2)),
+    ("Motor and brake", _sbox(P["motor_x"] - P["motor_r"], P["gm_z"] + gzz / 2, P["motor_x"] + P["motor_r"], P["gm_z"] + gzz / 2 + P["motor_l"])),
+    ("Replacement low cross bar", _Pt(P["rail_x"], P["low_bar"]).buffer(P["bar_r"])),
+    ("Rails (load side of the shaft)", _sbox(P["rail_x"] - P["rail_r"], -P["rail_below"], P["rail_x"] + P["rail_r"], 400)),
+]
+print(f"Frame-fixed outlines against every nosing (need {ENV_MARGIN:.0f} mm or more):")
+outline_clear = {}
+for name, poly in OUTLINES:
+    g = min(poly.distance(_Pt(*q)) for q in noses)
+    inside = any(poly.contains(_Pt(*q)) for q in noses)
+    outline_clear[name] = -1.0 if inside else g
+    print(f"  {name:38s} nearest nosing {g:6.1f} mm{'  HITS' if inside or g < ENV_MARGIN else ''}")
+    rec("nosing_clear_" + name.split(" (")[0].lower().replace(" ", "_").replace(",", "").replace("-", "_") + "_mm", round(g, 1), "mm")
+skid_poly = _sbox(P["skid_x"], P["skid_z"][0], P["skid_x"] + 10, P["skid_z"][1])
+skid_clear = min(skid_poly.distance(_Pt(*q)) for q in noses)
+print(f"  Nosing guard skids (meant to be the nearest part) nearest nosing {skid_clear:6.1f} mm")
+rec("nosing_clear_skids_mm", round(skid_clear, 1), "mm")
+case_clear = outline_clear["Chain case and drive-side axle plate"]
+all_outlines_ok = all(v >= ENV_MARGIN for v in outline_clear.values())
 
 # Frame back vs the nosings above, beyond the shaft-line region, on the design stair at the set tilt
 u = (-math.sin(math.radians(TILT)), math.cos(math.radians(TILT)))       # up the frame
@@ -316,6 +389,9 @@ print(f"Final stage 08B, {P['z_driven']}T on the shaft: chain pull {chain_t:.0f}
 print(f"First stage 06B, {P['z_cs1']}T on the countershaft ({t_cs:.0f} N m): chain pull {chain1_t:.0f} N, "
       f"safety factor {sf_chain1:.1f}")
 print(f"Fastest climb on the {P_MOTOR:.0f} W motor: {spm_max:.1f} steps/min")
+print(f"Chain centres: final stage {D['c2']:.1f} mm for {P['links2']} links of 08B (whole chain needs {D['c2_whole']:.1f} mm); "
+      f"first stage {D['c1']:.1f} mm for {P['links1']} links of 06B ({D['c1_whole']:.1f} mm); slots give 4 mm of take-up")
+rec("centres_08B_mm", round(D["c2"], 1), "mm"); rec("centres_06B_mm", round(D["c1"], 1), "mm")
 rec("chain_pull_08B_N", round(chain_t), "N"); rec("chain_sf_08B", round(sf_chain, 1))
 rec("chain_pull_06B_N", round(chain1_t), "N"); rec("chain_sf_06B", round(sf_chain1, 1))
 rec("steps_per_min_max_250W", round(spm_max, 1), "steps/min")
@@ -382,7 +458,8 @@ for k, v, un in [("com_swing_mm", round(swing), "mm"), ("handle_force_set_N", ro
 head("8. Structure")
 ds = P["shaft_d"]
 tau = 16 * t_peak * 1000 / (math.pi * ds ** 3)
-overhang = P["cluster_y"] - (P["rail_y"] + 14)
+y_brg = P["axle_plate_y"][0] - BRG["205"]["t"]          # main bearing centre, on the inside of the axle plates (SCM-DDR-003)
+overhang = P["cluster_y"] - y_brg
 m_b = SHOCK * W / 2 * overhang / 1000
 sig = 32 * m_b * 1000 / (math.pi * ds ** 3)
 vm = math.sqrt(sig ** 2 + 3 * tau ** 2)
@@ -412,8 +489,13 @@ for k, v, un in [("shaft_vm_MPa", round(vm), "MPa"), ("shaft_sf", round(sf_shaft
 
 # ---------------------------------------------------------------- 9. Mass and size (R5, R11)
 head("9. Mass and size")
-print("Mass roll-up: " + "; ".join(f"{k} {v}" for k, v in MASS.items()) + f" -> {m_truck:.1f} kg")
-print(f"Width {D['width']:.0f} mm; upright height {D['height_upright']:.0f} mm")
+print("Mass roll-up: " + "; ".join(f"{k} {v:.2f}" for k, v in MASS.items()) + f" -> {m_truck:.1f} kg")
+print("  Parts added for construction: " + "; ".join(f"{k} {v:.2f}" for k, v in MADE.items()))
+print("  Drive itemised: " + "; ".join(f"{k} {v:.2f}" for k, v in DRIVE.items()) + f" -> {sum(DRIVE.values()):.2f} kg (was a 2.5 kg allowance)")
+rec("drive_mass_kg", round(sum(DRIVE.values()), 2), "kg")
+rec("added_parts_mass_kg", round(sum(MADE.values()), 2), "kg")
+print(f"Width {D['width']:.0f} mm at the wheel faces, {D['width_bolts']:.0f} mm over the wheel end screws; upright height {D['height_upright']:.0f} mm")
+rec("width_over_screws_mm", round(D["width_bolts"]), "mm")
 print(f"Option C folding hinge {P['fold_z']:.0f} mm above the shaft: folded height {D['folded_height']:.0f} mm "
       f"(about +0.4 kg, +$20; study only)")
 rec("width_mm", round(D["width"]), "mm"); rec("height_upright_mm", round(D["height_upright"]), "mm")
@@ -423,7 +505,8 @@ rec("folded_height_mm", round(D["folded_height"]), "mm")
 head("10. Cost")
 rows = list(csv.DictReader((ROOT / "bom/bom.csv").open()))
 cost = sum(float(x["qty"]) * float(x["unit_cost_usd"]) for x in rows)
-print(f"BOM lines {len(rows)}, total ${cost:.2f} against ${BUDGET:.0f} (margin {100 * (1 - cost / BUDGET):.1f} %)")
+print(f"BOM lines {len(rows)}, estimated cost USD {cost:.2f}; value-engineering target USD {BUDGET:.0f} "
+      f"(USD {abs(cost - BUDGET):.0f} {'over' if cost > BUDGET else 'under'} the target)")
 rec("bom_total_usd", round(cost, 2), "USD")
 
 # ---------------------------------------------------------------- 11. Requirements
@@ -448,14 +531,17 @@ REQ = [
     ("R9", "Hold-to-run", "Stops within 0.2 s of grip release", "Circuit concept only", "not verifiable at TRL 3"),
     ("R10", "Flat rolling", "40 N or less at rated load", f"{push:.0f} N", "met"),
     ("R11", "Size", "Width 600 mm or less; upright height 1,500 mm or less",
-     f"{D['width']:.0f} mm; {D['height_upright']:.0f} mm", "met"),
-    ("R12", "Affordable", f"${BUDGET:.0f} or less", f"${cost:.0f}", "met" if cost <= BUDGET else "not met"),
+     f"{D['width_bolts']:.0f} mm over the wheel screws; {D['height_upright']:.0f} mm",
+     "met" if D["width_bolts"] <= 600 and D["height_upright"] <= 1500 else "not met"),
+    ("R12", "Affordable", f"Value-engineering target USD {BUDGET:.0f}", f"USD {cost:.0f}",
+     "under the target" if cost <= BUDGET else f"over the target by USD {cost - BUDGET:.0f}"),
     ("R13", "Battery", "24 V LiFePO4, BMS, fused, 0 to 45 degC charge window, 4 h charge", f"{t_chg:.1f} h", "met"),
     ("R14", "Environment", "0 to 40 degC, IP54, rain on stoops", "Enclosure concept only", "not verifiable at TRL 3"),
     ("R15", "Stair and building protection", "No steel contact with stairs; skids over nosings",
      f"{P['z_driven']}T sprocket guard radius {D['guard_r']:.1f} mm against {env_exact:.1f} mm allowed; "
-     f"countershaft guard clears by {cs_min - D['cs_guard_r']:.0f} mm",
-     "met" if D["guard_r"] <= env_exact and cs_min > D["cs_guard_r"] + ENV_MARGIN else "not met"),
+     f"countershaft guard clears by {cs_min - D['cs_guard_r']:.0f} mm; every frame-fixed outline at least "
+     f"{min(outline_clear.values()):.0f} mm from every nosing",
+     "met" if D["guard_r"] <= env_exact and cs_min > D["cs_guard_r"] + ENV_MARGIN and all_outlines_ok else "not met"),
 ]
 head("11. Requirements")
 for rid, name, tgt, val, st in REQ:
