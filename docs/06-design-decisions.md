@@ -3,7 +3,7 @@ doc_id: SCM-DEC-001
 title: StepClimber design decisions register
 project: StepClimber
 doc_type: Design decisions register
-version: "0.2"
+version: "0.3"
 status: Draft
 date: '2026-10-02'
 author: Amish Chadha
@@ -17,6 +17,10 @@ revisions:
   date: '2026-10-02'
   author: Amish Chadha
   change: Amish approved the recommendations of open items 1 to 7 on 2026-10-02; all moved to decisions made; R5 and shaft material lines to confirm updated
+- version: "0.3"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: Follow-ups carried out; figures from SCM-CAL-001 v0.5; shaft repriced (USD 788 total); item 9 to confirm updated
 ---
 
 # StepClimber design decisions register
@@ -38,14 +42,14 @@ None. All open decisions were decided on 2026-10-02.
 | 5 | The wheels: 200 mm solid rubber, 45 mm hub length, two 20 mm bore sealed bearings | The stub axle length and the overall width (588 mm) | SCM-DDR-003, P8 |
 | 6 | The sprockets: 20-tooth 08B bored 25 mm keyed; 10-tooth 08B and 35-tooth 06B bored 20 mm keyed, the 10-tooth hub no more than 27 mm across; 10-tooth 06B bored to the gearmotor shaft | The hubs must clear the chain plates | SCM-DDR-003, P6 |
 | 7 | The electronics box (about 340 x 110 x 50 mm, IP54) and the pack cradle mounting pattern | The upright hole positions | SCM-DDR-003, P9 |
-| 8 | Weigh each bought part against the mass roll-up of SCM-CAL-001 v0.3 | R5 (35 kg for the first prototype, set 2026-10-02) and R3 depend on it | SCM-CAL-001 v0.3, section 9 |
-| 9 | The 25 mm keyed cluster shaft is quenched and tempered alloy steel such as 4140, not 1018 (decided 2026-10-02), with a mill certificate | The 1.4 safety factor at a 3 g load was found for 1018; fatigue is not assessed | Decision of 2026-10-02 (open item 1); SCM-CAL-001 |
+| 8 | Weigh each bought part against the mass roll-up of SCM-CAL-001 v0.5 | R5 (35 kg for the first prototype, set 2026-10-02) and R3 depend on it | SCM-CAL-001 v0.5, section 9 |
+| 9 | The 25 mm keyed cluster shaft is quenched and tempered alloy steel such as 4140, not 1018 (decided 2026-10-02), with a mill certificate | Safety factor 2.5 at a 3 g load and fatigue factor 1.8 are on assumed minimum strengths (655 MPa yield, 1,000 MPa tensile); confirm from the certificate | Decision of 2026-10-02 (open item 1); SCM-CAL-001 |
 
 ## Value engineering
 
-Value-engineering target: USD 650 (a hypothetical control target, not a limit). Estimated cost of the constructable design: USD 776 (USD 126 over the target). Main cost drivers and savings worth trying:
+Value-engineering target: USD 650 (a hypothetical control target, not a limit). Estimated cost of the constructable design: USD 788 (USD 138 over the target). Main cost drivers and savings worth trying:
 
-- The largest lines are the battery pack (USD 120), the clusters with their weld-on hubs (USD 116), the worm gearmotor (USD 110), the shafts, bearings, sprockets and chains (USD 96), the frame (USD 70) and the laser-cut axle plates and chain case (USD 55).
+- The largest lines are the battery pack (USD 120), the clusters with their weld-on hubs (USD 116), the worm gearmotor (USD 110), the shafts, bearings, sprockets and chains (USD 108, including USD 12 for the 4140 cluster shaft), the frame (USD 70) and the laser-cut axle plates and chain case (USD 55).
 - Making the design buildable added USD 143: lines 14 to 17 (axle plates and chain case, uprights, frame steel and fixings, USD 99), the weld-on hubs (USD 28) and the second countershaft bearing and chain connecting links (USD 16).
 - Savings worth trying: order the spiders, axle plates and case plates in one laser-cut batch (one setup and one shipment, perhaps USD 15); buy a hand truck frame without wheels or a used one, since its wheels and axle are discarded (perhaps USD 20 to 30); a reconditioned wheelchair worm gearmotor with brake (perhaps USD 40); bore-to-size plate sprockets instead of hubbed ones (perhaps USD 10).
 

@@ -357,3 +357,43 @@ The cluster shaft is to be 4140 rather than 1018; its strength must be recalcula
 ### Recommended next step
 
 Update BOM line 3 and recalculate the cluster shaft for 4140 with a fatigue check, then rerun `sizing.py` with the decided targets. TRL 4 remains on hold by Amish's instruction.
+
+## Session 2026-10-02: approved follow-ups carried out
+
+Amish approved on 2026-10-02 that every follow-up action from the open-decision sign-off be carried out. trl stays 3; nothing was built or tested. The follow-ups listed in the "Follow-up actions" list of the "open decisions decided" section above are marked here.
+
+### Approved follow-ups carried out
+
+1. Done. Decision 1 (BOM): line 3 is now a 25 mm keyed cluster shaft in 4140 quenched and tempered alloy steel with a mill certificate, repriced from USD 96 to USD 108 (about USD 22 per metre for 25 mm bar, 0.5 m, keyway milled, against about USD 8 for 1018 bar; indicative). `bom/bom.csv`, `bom/bom-notes.md`.
+2. Done. Decision 1 (drawings): shaft material in `cad/src/model.py` (part name; mass unchanged at 1.89 kg because both steels are 7,850 kg/m3) and on making sketch SCM-DWG-106, now Rev P2. STEP and STL re-exported; 90 of 90 constructability checks pass.
+3. Done. Decision 1 (calcs): SCM-CAL-001 v0.5 recalculates the shaft for 4140 (655 MPa minimum yield assumed): factor 2.5 at 3 g (1.4 on 1018). Fatigue assessed (section 8): endurance limit 259 MPa, Goodman factor 1.8. The 1,000 MPa tensile strength is an assumption to confirm from the mill certificate.
+4. Done. Decision 2 (calcs): `docs/04-calcs/sizing.py` rerun at R5 35 kg, R3 16 steps/min (3.75 s per third of a turn) and the plus or minus 3 degree window; `results.csv`, inputs table, torque, power, chain, grip force and structure figures updated.
+5. Not done: set the plus or minus 3 degree window in the firmware sketch and controller notes; this is firmware, TRL 4 work, on hold.
+6. Done as far as possible here. Decision 5 (pictures): `cad/src/product_model.py` now takes the drive, bearings, axle plates, chain case, uprights, standoffs, lowered cross bar and fixings from `model.py`, with the gearmotor standing up the frame on the inner case plate, the electronics box, pack, cradle and switch on the uprights, and the skids on standoffs. Render scenes exported (hero, exploded, detail). Not done: photoreal renders, `media/card.png` and `media/social-preview.png`, which are made on Amish's Mac.
+7. Done. Decision 3 (pictures): concept media labels and key figures now read 244 W at 16 steps/min and R3, R5 and R6 met on paper; `media/` regenerated.
+
+### Requirement status changes (SCM-CAL-001 v0.5)
+
+None in status against v0.4 (R3, R5 and R6 stay met on paper as set for the first prototype). Figures changed: R3 244 W needed from the 250 W motor (16.4 steps/min at most); R6 99 N at the plus or minus 3 degree edge; R1 shaft factor 2.5 (fatigue 1.8), rail 3.2. Ten met, four not verifiable at TRL 3 (R7, R8, R9, R14), R12 over the target.
+
+### Cost and mass
+
+Value-engineering target: USD 650. Estimated cost of the constructable design: USD 788 (USD 138 over the target). `budget_usd` is unchanged at 650. Truck mass 34.2 kg (unchanged), against the 35 kg target for the first prototype.
+
+### Documents and pictures changed
+
+- `docs/04-calcs/01-sizing.md` (SCM-CAL-001 v0.5), `docs/03-requirements.md` (SCM-REQ-001 v0.7), `docs/02-concept.md` (SCM-PRC-001 v0.7), `docs/05-build-plan.md` (SCM-BLD-001 v0.3), `docs/06-design-decisions.md` (SCM-DEC-001 v0.3), `README.md`, `bom/bom.csv`, `bom/bom-notes.md` (rewritten to the 17 current lines; it still showed the 2026-09-25 total).
+- General arrangement SCM-DWG-001 Rev P5; making sketch SCM-DWG-106 Rev P2; `media/concept-blueprint`, `hero.png`, `exploded.png`, `flow.png`, `model.glb`. No other build plan picture changed because no geometry changed.
+- Appearance deviations (Proposed, awaiting Amish): the chain case of the appearance model is now the constructable case, so the earlier inspection window over the chain is dropped (the case sits on the inside of the rail); sprockets and chains are shown as in the CAD model, without individual teeth; the controller wiring is the CAD harness.
+
+### Cross-repo actions
+
+None found for this repo.
+
+### Safety
+
+The 4140 shaft factors rest on assumed minimum strengths and a keyway fatigue factor; confirm from the mill certificate and test before any loaded stair trial. The 99 N grip force leaves almost no margin under 100 N, and the tight window may stop the climb often on uneven stairs.
+
+## 2026-10-02: photoreal renders redone on the constructable design
+
+Rendered with Blender Cycles on Amish's Mac from the updated appearance model; captioned with `.kit/photo_caption.py`; `media/card.png` and `media/social-preview.png` regenerated with `.kit/cards.py`. Views: hero, exploded, detail. image_qc passes. Appearance deviations are those logged above as proposed, awaiting Amish.

@@ -360,7 +360,7 @@ def build_components(p=PARAMS):
         bb.append(fuse([ycyl(cs[0], iy0 - g4["t"], iy1, zz, 5.0), yhex(cs[0], iy0 - g4["t"] - 9, iy0 - g4["t"], zz, 16)]))
     add("brg_bolts", "Bearing bolts (M12 and M10, nyloc nuts)", fuse(bb), 17, "fixing", "drive")
     sh = ycyl(0, -p["shaft_half"], p["shaft_half"], Z0, p["shaft_d"] / 2)
-    add("shaft", "Cluster shaft, 25 mm keyed", sh, 3, "bought", "drive")
+    add("shaft", "Cluster shaft, 25 mm keyed, 4140 quenched and tempered", sh, 3, "bought", "drive")
     csy0 = iy0 - g4["t"] - g4["boss_t"] / 2 - g4["ins_w"] / 2
     add("cs_shaft", "Countershaft, 20 mm keyed", ycyl(cs[0], csy0, py1, Z0 + cs[1], 10.0), 3, "bought", "drive")
     y1, y2 = p["sprocket_y"], p["sprocket2_y"]
@@ -656,7 +656,9 @@ def print_checks(p=PARAMS):
 
 
 def masses(p=PARAMS):
-    """Masses (kg) of the made parts, from the model volumes (steel 7,850, aluminium 2,700 kg/m3)."""
+    """Masses (kg) of the made parts, from the model volumes (steel 7,850, aluminium 2,700 kg/m3).
+    The 25 mm cluster shaft is 4140 quenched and tempered alloy steel (decided 2026-10-02), density 7,850 kg/m3, so its mass
+    is unchanged from the 1018 bar."""
     C = build_components(p)
     rho = {"axle_plate": 7.85, "case_outer": 7.85, "case_inner": 7.85, "case_band": 7.85, "spacers": 7.85,
            "low_bar": 7.85, "uprights": 2.70, "standoffs": 7.85, "spider_l": 7.85, "spider_r": 7.85,

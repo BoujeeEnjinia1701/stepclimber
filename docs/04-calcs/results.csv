@@ -85,62 +85,64 @@ alt_a165_w200_hub_n32_mm,64,mm
 alt_a165_w200_arm_n32_mm,12,mm
 lift_work_J,181,J
 shaft_torque_mean_Nm,86,N m
-shaft_torque_static_Nm,140,N m
-shaft_torque_peak_Nm,182,N m
-shaft_rpm,5.67,rpm
-shaft_power_peak_W,108,W
-motor_output_peak_W,260,W
-gearmotor_rpm,40,rpm
-gearmotor_torque_Nm,28.2,N m
+shaft_torque_static_Nm,139,N m
+shaft_torque_peak_Nm,181,N m
+shaft_rpm,5.33,rpm
+shaft_power_peak_W,101,W
+motor_output_peak_W,244,W
+gearmotor_rpm,37,rpm
+gearmotor_torque_Nm,28.1,N m
 centres_08B_mm,144.7,mm
 centres_06B_mm,145.1,mm
-chain_pull_08B_N,4478,N
+chain_pull_08B_N,4465,N
 chain_sf_08B,4.0,
-chain_pull_06B_N,1764,N
-chain_sf_06B,5.0,
-steps_per_min_max_250W,16.3,steps/min
-motor_output_at_20spm_W,306,W
+chain_pull_06B_N,1759,N
+chain_sf_06B,5.1,
+steps_per_min_max_250W,16.4,steps/min
+motor_output_at_20spm_W,305,W
 energy_up_J,575,J
 energy_down_J,46,J
 steps_per_charge,1215,steps
 charge_time_h,3.5,h
 worm_friction_angle_deg,4.83,deg
-hold_torque_Nm,140,N m
+hold_torque_Nm,139,N m
 worm_backdrive_eff,-0.22,
 brake_margin,7.5,x
 com_swing_mm,89,mm
 handle_force_set_N,76,N
-handle_force_edge_N,121,N
-handle_force_vertical_N,273,N
+handle_force_edge_N,99,N
+handle_force_vertical_N,222,N
 window_for_100N_deg,3.1,deg
 push_force_N,28,N
-shaft_vm_MPa,133,MPa
-shaft_sf,1.4,
+shaft_fatigue_se_MPa,259,MPa
+shaft_fatigue_sf_goodman,1.8,
+shaft_vm_MPa,132,MPa
+shaft_sf,2.5,
 arm_vm_MPa,178,MPa
 arm_sf,1.5,
-rail_MPa,97,MPa
-rail_sf,2.6,
+rail_MPa,79,MPa
+rail_sf,3.2,
 drive_mass_kg,5.54,kg
 added_parts_mass_kg,4.37,kg
 width_over_screws_mm,588,mm
 width_mm,569,mm
 height_upright_mm,1451,mm
 folded_height_mm,1139,mm
-bom_total_usd,776.0,USD
+bom_total_usd,788.0,USD
 
 requirement,name,target,value,status
-R1,Rated stair load,60 kg up and down; 100 kg on the flat,"Shaft SF 1.4, spider SF 1.5, rail SF 2.6 at 3 g",met
+R1,Rated stair load,60 kg up and down; 100 kg on the flat,"Shaft SF 2.5 (fatigue 1.8), spider SF 1.5, rail SF 3.2 at 3 g",met
 R2,Stair range,"Risers 100 to 200 mm, treads 250 mm or more, nosing up to 32 mm",Landing 66 mm past the nosing at 200 mm; tread needed 240 mm; arms clear nosings up to 32 mm overhang,met
-R3,Climb speed,17 steps/min or more at rated load,260 W peak motor output on a 250 W motor,not met
+R3,Climb speed,16 steps/min or more at rated load,244 W peak motor output on a 250 W motor,met
 R4,Endurance,"1,000 loaded steps up plus 1,000 down per charge","1,215",met
-R5,Truck mass,27 kg or less; pack 3 kg or less,34.2 kg; pack 2.6 kg,not met
-R6,Operator handle force,100 N or less inside the tilt window,121 N at the +/-6 deg edge; 76 N at the set angle,not met
-R7,Tilt control,"100 Hz IMU, +/-6 deg window, stop within 0.2 s",Control concept only,not verifiable at TRL 3
+R5,Truck mass,35 kg or less; pack 3 kg or less,34.2 kg; pack 2.6 kg,met
+R6,Operator handle force,100 N or less inside the tilt window,99 N at the +/-3 deg edge; 76 N at the set angle,met
+R7,Tilt control,"100 Hz IMU, +/-3 deg window, stop within 0.2 s",Control concept only,not verifiable at TRL 3
 R8,Hold on any loss,Holds with power off; drift 5 mm or less in 10 min,Worm self-locking (back-drive -0.22); brake margin 7.5x; drift unmeasured,not verifiable at TRL 3
 R9,Hold-to-run,Stops within 0.2 s of grip release,Circuit concept only,not verifiable at TRL 3
 R10,Flat rolling,40 N or less at rated load,28 N,met
 R11,Size,"Width 600 mm or less; upright height 1,500 mm or less",588 mm over the wheel screws; 1451 mm,met
-R12,Affordable,Value-engineering target USD 650,USD 776,over the target by USD 126
+R12,Affordable,Value-engineering target USD 650,USD 788,over the target by USD 138
 R13,Battery,"24 V LiFePO4, BMS, fused, 0 to 45 degC charge window, 4 h charge",3.5 h,met
 R14,Environment,"0 to 40 degC, IP54, rain on stoops",Enclosure concept only,not verifiable at TRL 3
 R15,Stair and building protection,No steel contact with stairs; skids over nosings,20T sprocket guard radius 53.9 mm against 54.2 mm allowed; countershaft guard clears by 80 mm; every frame-fixed outline at least 10 mm from every nosing,met

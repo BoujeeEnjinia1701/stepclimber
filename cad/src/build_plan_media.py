@@ -230,10 +230,11 @@ def sheets(which=None):
         out.append(bv.component_sheet(
             Part("Cluster shaft and countershaft", sh, COL["shaft"]), [M["outer"], M["axle_plate"], M["brg_main"], M["spiders"]],
             dwg_no="SCM-DWG-106", title="StepClimber cluster shaft and countershaft: making sketch",
-            material="Keyed bright steel shaft 25 mm and 20 mm, with keys",
+            material="Cluster shaft 25 mm keyed, 4140 quenched and tempered (mill certificate); countershaft 20 mm keyed bright steel",
             view_shape=b.Pos(0, 0, -Z0) * sh, inset_view=(18, 125),
             notes=[f"Cluster shaft: cut 25 mm keyed shaft to {2 * P['shaft_half']:.0f} mm; chamfer both ends 1 mm.",
-                   "  The key runs its full length (bought keyed stock).",
+                   "  4140 quenched and tempered steel, not bright 1018; keep the mill certificate.",
+                   "  The key runs its full length (keyway milled by the supplier).",
                    "Countershaft: cut 20 mm keyed shaft to 124 mm; chamfer both ends.",
                    "The cluster shaft runs in the two 25 mm flange bearings 336 mm",
                    "  apart and carries the 20-tooth sprocket inside the chain case.",
@@ -244,7 +245,9 @@ def sheets(which=None):
                    "  each case plate; its two sprockets sit between them.",
                    "Check: both shafts slide through their bearings by hand before",
                    "  the bearing grub screws are tightened."],
-            **base))
+            rev="P2", revisions=[("P1", "Making sketch for the prototype build plan", DATE, "AC"),
+                                 ("P2", "Cluster shaft in 4140 quenched and tempered steel (SCM-DEC-001, item 1)", "2026-10-02", "AC")],
+            **{**base, "date": "2026-10-02"}))
     if want(107):
         up = S("uprights")
         one = up & bx(-300, 300, 0, 400, -100, 3000)

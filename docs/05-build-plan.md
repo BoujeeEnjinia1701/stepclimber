@@ -3,7 +3,7 @@ doc_id: SCM-BLD-001
 title: StepClimber prototype build plan
 project: StepClimber
 doc_type: Build plan
-version: "0.2"
+version: "0.3"
 status: Draft
 date: '2026-10-02'
 author: Amish Chadha
@@ -17,6 +17,10 @@ revisions:
   date: '2026-10-02'
   author: Amish Chadha
   change: 'Decisions of 2026-10-02 carried in: cluster shaft in 4140 (section 3.6), drive check at 16 steps/min, tilt stop at 3 degrees (SCM-DEC-001, items 1, 3 and 4)'
+- version: "0.3"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: 'Making sketch of the cluster shaft (SCM-DWG-106) redrawn at revision P2 with the 4140 material; general arrangement at revision P5; figures from SCM-CAL-001 v0.5'
 ---
 
 # StepClimber prototype build plan
@@ -182,7 +186,7 @@ The plate stands 86 mm inside the outer plate on the two spacers, held by M8 cou
 
 *Figure 12. Cluster shaft and countershaft making sketch (SCM-DWG-106).*
 
-**What it is and what it is made from.** The cluster shaft carries both clusters and the 20-tooth final sprocket; the countershaft carries the two middle sprockets. Bought keyed shaft with keys: the 25 mm cluster shaft in quenched and tempered alloy steel such as 4140 (not 1018 bright bar), with a mill certificate; the 20 mm countershaft in bright steel.
+**What it is and what it is made from.** The cluster shaft carries both clusters and the 20-tooth final sprocket; the countershaft carries the two middle sprockets. Bought keyed shaft with keys: the 25 mm cluster shaft in quenched and tempered alloy steel such as 4140 (not 1018 bright bar), with a mill certificate, and have the supplier mill the keyway; the 20 mm countershaft in bright steel. The 4140 shaft is about 12 dollars dearer than bright 1018 bar and about 2.5 times as strong against a dropped step (a safety factor of 2.5 against 1.4), so do not swap in a softer bar.
 
 **How to make it.**
 
@@ -446,8 +450,8 @@ Stop at each point. Carry on only when everything listed is true.
 
 - Model and constructability checks: `cad/src/model.py` (`python cad/src/model.py --check`, 90 checks); STEP and STL exports in `cad/step/` and `cad/stl/`.
 - Pictures: `cad/src/build_plan_media.py`, using `.kit/build_views.py`; written to `docs/05-build-plan/` and `cad/drawings/SCM-DWG-101` to `SCM-DWG-109`.
-- General arrangement: `cad/drawings/SCM-DWG-001.pdf`, Rev P4.
-- Calculations: `docs/04-calcs/01-sizing.md` (SCM-CAL-001 v0.3) and `docs/04-calcs/sizing.py`: chain centres and pulls (section 4), nosing clearances of the frame-fixed outlines (section 3), structure (section 8), mass (section 9).
+- General arrangement: `cad/drawings/SCM-DWG-001.pdf`, Rev P5.
+- Calculations: `docs/04-calcs/01-sizing.md` (SCM-CAL-001 v0.5) and `docs/04-calcs/sizing.py`: chain centres and pulls (section 4), nosing clearances of the frame-fixed outlines (section 3), structure (section 8), mass (section 9).
 - Bill of materials: `bom/bom.csv`.
 - Decisions: `docs/decisions/0003-design-for-construction.md` (SCM-DDR-003), with SCM-DDR-001 and SCM-DDR-002; the register `docs/06-design-decisions.md` (SCM-DEC-001).
 - Requirements: `docs/03-requirements.md` (SCM-REQ-001 v0.5).

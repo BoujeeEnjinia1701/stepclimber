@@ -78,7 +78,7 @@ MASS = {                    # kg, truck mass roll-up (BOM line numbers)
     "17 fixings added for construction": 0.5,
 }
 H_CG = 500.0                # mm, combined center of mass above the shaft, along the frame
-STEPS_PER_MIN = 17.0        # R3, revised 2026-09-25 (SCM-DDR-002) to keep the 250 W motor
+STEPS_PER_MIN = 16.0        # R3 for the first prototype, decided 2026-10-02 (SCM-DEC-001, item 3): 3.75 s per third of a turn
 ETA_DRV, ETA_MOT, ETA_WORM, ETA_CHAIN = 0.95, 0.80, 0.45, 0.95
 ETA_CHAIN2 = 0.97           # second chain stage (08B), added by the rework
 DYN = 1.3                   # friction and dynamics factor on static shaft torque
@@ -92,17 +92,18 @@ DOD = 0.90                  # usable fraction
 STANDBY = 1.10              # factor for standby, starts and stops
 CHG_V, CHG_A, ETA_CHG, CV_TAIL = 29.2, 3.0, 0.90, 0.3   # charger; CV tail in h
 CRR = 0.03                  # rolling resistance, solid rubber on a smooth floor
-WINDOW = 6.0                # deg, R7 tilt window (tightened from 8, SCM-DDR-002)
+WINDOW = 3.0                # deg, R7 tilt window for the first loaded trials, decided 2026-10-02 (SCM-DEC-001, item 4)
 F_HANDLE_MAX = 100.0        # N, R6
 NOSE = (0.0, 32.0)          # mm, nosing overhang range (R2)
 H_DESIGN, T_DESIGN = 196.0, 254.0   # IRC maximum riser and minimum tread
 LAND_MIN = 30.0             # mm, landing contact past the nosing edge (IRC nosing radius up to 9.5 mm, plus wear)
 ENV_MARGIN = 10.0           # mm, clearance wanted between a shaft-mounted envelope and a nosing
-SY_SHAFT, SY_PLATE, SY_TUBE = 370.0, 275.0, 250.0   # MPa: 1018 cold drawn, S275 plate, welded steel tube
+SY_SHAFT, SY_PLATE, SY_TUBE = 655.0, 275.0, 250.0   # MPa: 4140 quenched and tempered shaft (decided 2026-10-02; minimum yield, to be confirmed by the mill certificate), S275 plate, welded steel tube
+SUT_SHAFT = 1000.0          # MPa, 4140 quenched and tempered, minimum tensile strength assumed
 KT_KEY = 2.0                # keyway stress concentration
 SHOCK = 3.0                 # dropped-step dynamic factor
 CHAIN_BREAK = {"06B": (9.525, 8.9e3), "08B": (12.7, 17.8e3)}   # pitch mm, ISO 606 minimum tensile N
-R5_MAX = 27.0               # kg, R5 truck mass, revised 2026-09-25 (SCM-DDR-002)
+R5_MAX = 35.0               # kg, R5 truck mass for the first prototype, decided 2026-10-02 (SCM-DEC-001, item 2)
 BUDGET = 650.0              # USD, value-engineering target (budget_usd), set 2026-09-25 (SCM-DDR-002)
 
 a, r = P["arm"], P["wheel_r"]
@@ -483,7 +484,27 @@ z_rail = math.pi * (ro ** 4 - ri ** 4) / (4 * ro)
 s_rail = m_rail * 1000 / z_rail
 print(f"Rail 28 x 1.5 mm tube: {m_rail:.0f} N m each from the window-edge grip force; {s_rail:.0f} MPa; "
       f"safety factor {SY_TUBE / s_rail:.1f}")
-for k, v, un in [("shaft_vm_MPa", round(vm), "MPa"), ("shaft_sf", round(sf_shaft, 1), ""), ("arm_vm_MPa", round(vm_arm), "MPa"),
+# Fatigue of the keyed cluster shaft (4140), added 2026-10-02 (SCM-DEC-001, item 1). Modified Goodman with the
+# distortion-energy combination (Shigley form): bending is fully reversed once per revolution at the 1 g stair load
+# on the bearing overhang; torque is pulsating from zero to the peak shaft torque at each step.
+KF_B, KFS_T = 2.0, 2.0                                   # fatigue stress concentration of the end-milled keyway (bending, torsion)
+ka = 4.51 * SUT_SHAFT ** -0.265                          # machined surface
+kb = 1.24 * ds ** -0.107                                 # size, 25 mm
+ke = 0.814                                               # 99 % reliability
+se = 0.5 * SUT_SHAFT * ka * kb * ke
+ma_1g = W / 2 * overhang / 1000                          # N m, alternating bending moment at 1 g
+ta = tm = t_peak / 2
+term_a = math.sqrt(4 * (KF_B * ma_1g) ** 2 + 3 * (KFS_T * ta) ** 2) * 1000
+term_m = math.sqrt(3 * (KFS_T * tm) ** 2) * 1000
+n_fat = 1 / (16 / (math.pi * ds ** 3) * (term_a / se + term_m / SUT_SHAFT))
+sf_3g_static = SY_SHAFT / (KT_KEY * vm)
+print(f"Cluster shaft in 4140 quenched and tempered (yield {SY_SHAFT:.0f} MPa, tensile {SUT_SHAFT:.0f} MPa assumed): safety factor on yield "
+      f"{sf_3g_static:.1f} at 3 g (was 1.4 on 1018 at 370 MPa)")
+print(f"Fatigue: endurance limit {se:.0f} MPa after surface {ka:.2f}, size {kb:.2f} and reliability {ke:.3f} factors; alternating bending "
+      f"{ma_1g:.0f} N m at 1 g; pulsating torque 0 to {t_peak:.0f} N m; keyway Kf {KF_B:.1f} (bending) and {KFS_T:.1f} (torsion); "
+      f"Goodman safety factor {n_fat:.1f} (needs more than 1 for a long life; to be confirmed with a mill certificate and, at TRL 4, a test)")
+for k, v, un in [("shaft_fatigue_se_MPa", round(se), "MPa"), ("shaft_fatigue_sf_goodman", round(n_fat, 1), ""),
+                 ("shaft_vm_MPa", round(vm), "MPa"), ("shaft_sf", round(sf_shaft, 1), ""), ("arm_vm_MPa", round(vm_arm), "MPa"),
                  ("arm_sf", round(SY_PLATE / vm_arm, 1), ""), ("rail_MPa", round(s_rail), "MPa"), ("rail_sf", round(SY_TUBE / s_rail, 1), "")]:
     rec(k, v, un)
 
@@ -512,7 +533,7 @@ rec("bom_total_usd", round(cost, 2), "USD")
 # ---------------------------------------------------------------- 11. Requirements
 REQ = [
     ("R1", "Rated stair load", "60 kg up and down; 100 kg on the flat",
-     f"Shaft SF {sf_shaft:.1f}, spider SF {SY_PLATE / vm_arm:.1f}, rail SF {SY_TUBE / s_rail:.1f} at {SHOCK:.0f} g", "met"),
+     f"Shaft SF {sf_shaft:.1f} (fatigue {n_fat:.1f}), spider SF {SY_PLATE / vm_arm:.1f}, rail SF {SY_TUBE / s_rail:.1f} at {SHOCK:.0f} g", "met"),
     ("R2", "Stair range", "Risers 100 to 200 mm, treads 250 mm or more, nosing up to 32 mm",
      f"Landing {landing(200, 0)[0]:.0f} mm past the nosing at 200 mm; tread needed {r - landing(100, 0)[1]:.0f} mm; "
      f"arms clear nosings up to {n_arm_ok} mm overhang", "met" if n_arm_ok >= 32 else "not met"),

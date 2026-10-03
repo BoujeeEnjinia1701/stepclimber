@@ -3,9 +3,12 @@
 Finished-product look for photoreal renders: a powder-coated steel frame with welded rail bends,
 toe plate gussets and an anti-slip ribbed toe plate; teal laser-cut tri-star spiders with
 lightening slots, cast hub bosses, hub bolts and shaft end caps; six grooved rubber tyres on
-light grey rims with axle caps; flange bearings; a closed chain case with a clear inspection
-window over the final stage chain; the worm gearmotor with a ribbed gearbox, brake housing and a
-teal brake-release lever; the IP54 electronics box with a lid frame, a clear window over the
+light grey rims with axle caps; the constructable drive of SCM-DDR-003 taken from model.py (axle
+plates welded inside the rails, a closed chain case of two plates and a band on spacers, four
+flange bearings with their bolts, a 4140 cluster shaft, countershaft, sprockets and chains, two
+aluminium component uprights, skid standoffs and the lowered cross bar); the worm gearmotor
+standing up the frame on the inner case plate, with a ribbed gearbox, brake housing and a
+teal brake-release lever; the IP54 electronics box, hung on the uprights, with a lid frame, a clear window over the
 controller and IMU board and lid screws; the battery pack with a state-of-charge light bar,
 charge port, teal release latch and wordmark on its cradle; a key switch and fuse holder;
 cables; ribbed rubber grip sleeves, the dead-man lever and a control pod with a lit status
@@ -38,7 +41,7 @@ sys.path.insert(0, str(HERE.parents[1] / ".kit"))
 from build123d import (Axis, Box, Circle, Cylinder, GeomType, Location, Plane, Polygon, Pos,  # noqa: E402
                        Rectangle, RegularPolygon, Rot, SlotCenterToCenter, Solid, Sphere, Text,
                        Vector, extrude, fillet)
-from model import PARAMS, derived  # noqa: E402
+from model import PARAMS, build_components, derived  # noqa: E402
 
 TITLE = "StepClimber: motor-assisted stair-climbing hand truck"
 
@@ -209,6 +212,7 @@ def _union(shapes):
 def product_parts(P=PARAMS):
     D = derived(P)
     Z0 = D["hub_z"]
+    MC = build_components(P)          # constructable-design parts of model.py, used for the drive, mounts and fixings
     TL = Pos(0, 0, Z0) * Rot(0, -P["tilt"], 0) * Pos(0, 0, -Z0)
     out = []
 
@@ -216,9 +220,11 @@ def product_parts(P=PARAMS):
         q = (Rot(0, -P["tilt"], 0) * Pos(*v)).position
         return (q.X, q.Y, q.Z)
 
-    def add(name, shape, color, material, bom, group, explode=(0, 0, 0), tilt=True):
+    def add(name, shape, color, material, bom, group, explode=(0, 0, 0), tilt=True, shift=None):
         if shape is None:
             return
+        if shift is not None:
+            shape = Pos(*shift) * shape
         if tilt:
             shape = TL * shape
             explode = vec(explode)
@@ -238,8 +244,8 @@ def product_parts(P=PARAMS):
         r = _pipe([(rx, s * ry, zbot + 2), (rx, s * ry, ztop), (hx, s * 150, gz)], rr)
         r += Pos(hx, s * 150, gz) * Sphere(rr)
         rails = r if rails is None else rails + r
-    for dz in (60, 380, 700, 1000):
-        rails += _rod((rx, -ry, Z0 + dz), (rx, ry, Z0 + dz), 11)
+    for dz in P["bars"] + (P["low_bar"],):          # three bars kept, the bar at 60 mm cut off, a lower bar added
+        rails += _rod((rx, -ry, Z0 + dz), (rx, ry, Z0 + dz), P["bar_r"])
     add("Steel frame rails and cross bars (powder coat)", rails, C_FRAME, "painted", 1, "shell")
 
     tl, tw, tt = P["toe_l"], P["toe_w"], P["toe_t"]
@@ -255,115 +261,63 @@ def product_parts(P=PARAMS):
         toe += g
     add("Toe plate with ribs and gussets", toe, C_FRAME, "painted", 1, "shell")
 
-    # component mounting panel behind the rails (appearance addition, see docs/REVIEW.md)
-    pnl = _box(27.5, 0, Z0 + 700, 3, 2 * (ry - rr), 460)
-    pnl = _fillet_try(pnl, pnl.edges().filter_by(Axis.X), [8.0, 4.0])
-    for dz in (560, 840):
-        pnl -= _box(27.5, 0, Z0 + dz, 5, 140, 24)             # lightening slots
-    add("Component mounting panel", pnl, C_FRAME, "painted", 1, "shell")
+    # ============================================================ constructable-design mounts (from model.py)
+    add("Component uprights (aluminium flat bar)", MC["uprights"].shape, C_ALU, "metal", 15, "shell")
+    add("Upright bolts", MC["up_bolts"].shape, C_STEEL, "metal", 17, "shell")
+    add("Skid standoffs (square tube)", MC["standoffs"].shape, C_FRAME, "painted", 16, "shell", (-50, 0, 0))
 
-    # ============================================================ axle mount plates (internal, drive mounts)
-    mp = None
-    for s in (-1, 1):
-        m = _box(15, s * ry, Z0, 80, 16, 90)
-        m = _fillet_try(m, m.edges().filter_by(Axis.Y), [10.0, 6.0, 3.0])
-        mp = m if mp is None else mp + m
-    add("Axle mount plates (welded)", mp, C_FRAME, "painted", 1, "internal")
+    # ============================================================ axle plates, chain case, bearings
+    add("Axle plate, plain side (welded)", MC["axle_plate"].shape, C_FRAME, "painted", 14, "internal", (0, -160, 0))
+    add("Chain case outer plate (drive-side axle plate)", MC["case_outer"].shape, C_FRAME, "painted", 14, "internal", (0, 160, 0))
+    add("Chain case inner plate (aluminium)", MC["case_inner"].shape, C_ALU, "metal", 14, "internal", (0, -80, 0))
+    add("Chain case band (aluminium)", MC["case_band"].shape, C_ALU, "metal", 14, "internal", (0, 80, 0))
+    add("Chain case spacers", MC["spacers"].shape, C_STEEL, "metal", 14, "internal", (0, 40, 0))
+    add("Chain case spacer screws", MC["spacer_screws"].shape, C_STEEL, "metal", 17, "internal", (0, 120, 0))
+    add("Main shaft flange bearings", _union([MC["brg_main_l"].shape, MC["brg_main_r"].shape]), C_DARK, "painted", 3, "internal")
+    add("Countershaft flange bearings", _union([MC["brg_cs_out"].shape, MC["brg_cs_in"].shape]), C_DARK, "painted", 3, "internal", (0, 40, 0))
+    add("Flange bearing bolts", MC["brg_bolts"].shape, C_STEEL, "metal", 17, "internal")
 
-    # ============================================================ 3 shaft, bearings, chain drive
-    ys_out = P["cluster_y"] - P["spider_off"] + 13
-    add("Cluster shaft (steel)", _ycyl(0, 0, Z0, P["shaft_d"] / 2, 2 * ys_out), C_STEEL, "metal", 3, "internal")
-    br = P["bearing_r"]
-    brg, bb_bolts = [], []
-    for s in (-1, 1):
-        y_in = s * (ry + 8)
-        fl = _ycyl(0, y_in + s * 3, Z0, br, 6)
-        fl = _fillet_try(fl, _circle_edges(fl, br), [2.0, 1.0])
-        hub = _ycyl(0, y_in + s * 11, Z0, 28, 10)
-        hub = _fillet_try(hub, _faces_edges(hub, Axis.Y, 0 if s < 0 else -1), [3.0, 2.0])
-        brg.append(fl + hub + _ycyl(0, y_in + s * 17, Z0, 17, 2))
-        for k in range(3):
-            a = math.radians(90 + 120 * k)
-            bb_bolts.append(_hex_y(36 * math.cos(a), y_in + s * 7, Z0 + 36 * math.sin(a), 10, 4))
-    add("Flange bearings", _union(brg), C_DARK, "painted", 3, "internal", (0, 0, 0))
-    add("Flange bearing bolts", _union(bb_bolts), C_STEEL, "metal", 13, "internal")
-
-    y1, y2 = P["sprocket_y"], P["sprocket_y"] - 25
-    zc, zg = Z0 + P["cs_z"], Z0 + P["gm_z"]
+    # ============================================================ 3 shafts, sprockets and chains
     ES = (-40, 0, 30)
-
-    def sprocket(z, y, r_tip, n, w):
-        s = _ycyl(0, y, z, r_tip, w)
-        notch = _union([_ycyl(r_tip * math.cos(2 * math.pi * k / n), y, z + r_tip * math.sin(2 * math.pi * k / n),
-                              max(2.0, math.pi * r_tip / n * 0.55), w + 2) for k in range(n)])
-        s -= notch
-        return s + _ycyl(0, y, z, min(18.0, r_tip * 0.55), w + 6)
-
-    spr = sprocket(Z0, y2, D["sprocket_od"] / 2, P["z_driven"], 8)
-    spr += sprocket(zc, y2, D["cs2_pd"] / 2 + 6, P["z_cs2"], 8)
-    spr += sprocket(zc, y1, D["cs1_od"] / 2, P["z_cs1"], 6)
-    spr += sprocket(zg, y1, D["drive_pd"] / 2 + 5, P["z_drive"], 6)
+    add("Cluster shaft, 25 mm keyed (4140 steel)", MC["shaft"].shape, C_STEEL, "metal", 3, "internal")
+    add("Countershaft (20 mm)", MC["cs_shaft"].shape, C_STEEL, "metal", 3, "internal", ES)
+    spr = _union([MC["spr_main"].shape, MC["spr_cs"].shape, MC["spr_gm"].shape])
     add("Sprockets, 06B and 08B", spr, C_STEEL, "metal", 3, "internal", ES)
-    add("Countershaft (20 mm)", _ycyl(0, (y2 + ry) / 2, zc, 10, ry - y2 + 20), C_STEEL, "metal", 3, "internal", ES)
-
-    def chain(za, ra, zb, rb, y, w):
-        o = _stadium_y(0, za, ra + 4, zb, rb + 4, y - w / 2, y + w / 2)
-        i = _stadium_y(0, za, ra - 4, zb, rb - 4, y - w / 2 - 1, y + w / 2 + 1)
-        return o - i
-
-    ch = chain(Z0, D["sprocket_pd"] / 2, zc, D["cs2_pd"] / 2, y2, 12)
-    ch += chain(zc, D["cs1_pd"] / 2, zg, D["drive_pd"] / 2, y1, 9)
-    add("Roller chains", ch, "#4A4F57", "metal", 3, "internal", ES)
-
-    # chain case: closed sheet steel guard round both stages, with a clear window over the final stage
-    gr, cr = D["guard_r"], D["cs_guard_r"]
-    o2 = _stadium_y(0, Z0, gr, zc, gr, y2 - 15, y2 + 15)
-    o1 = _stadium_y(0, zc, cr, zg, cr, y1 - 13, y1 + 13)
-    i2 = _stadium_y(0, Z0, gr - 2, zc, gr - 2, y2 - 13, y2 + 13)
-    i1 = _stadium_y(0, zc, cr - 2, zg, cr - 2, y1 - 11, y1 + 11)
-    case = (o2 + o1) - (i2 + i1)
-    case -= _ycyl(0, 0, Z0, P["shaft_d"] / 2 + 2, 400)                       # shaft pass
-    win = _box(-gr + 1, y2, Z0 + P["cs_z"] / 2, 6, 20, 90)
-    case -= win
-    add("Chain case (sheet steel)", case, C_FRAME, "painted", 3, "internal", (-150, 60, 80))
-    pane = _box(-gr + 0.5, y2, Z0 + P["cs_z"] / 2, 1.5, 24, 94)
-    add("Chain case inspection window", pane, C_WINDOW, "clear", 3, "internal", (-150, 60, 80))
-    cscr = _union([_xcyl(-gr - 0.6, y2 + dy, Z0 + P["cs_z"] / 2 + dz, 2.6, 1.4)
-                   for dy in (-9.5, 9.5) for dz in (-52, 52)])
-    add("Chain case window screws", cscr, C_STEEL, "metal", 13, "internal", (-150, 60, 80))
-    csb = _ycyl(0, ry - 14, zc, 28, 16)
-    csb = _fillet_try(csb, _circle_edges(csb, 28), [2.0, 1.0])
-    add("Countershaft bearing", csb, C_DARK, "painted", 3, "internal", (0, 40, 0))
+    add("Roller chains", _union([MC["chain1"].shape, MC["chain2"].shape]), "#4A4F57", "metal", 3, "internal", ES)
 
     # ============================================================ 4 worm gearmotor with brake
-    gx, gy, gzz = P["gm_box"]
-    gmz = Z0 + P["gm_z"]
-    gcx = -gx / 2 + 2
+    # Gearbox bolted to the inside of the case inner plate, motor can standing up the frame (model.py)
+    gx, gyl, gzz = P["gm_box"]
+    gm = (P["cs_x"], Z0 + P["gm_z"])
+    iy0 = P["inner_y"][0]
+    gy0 = P["gm_y0"]
+    ymc = (gy0 + iy0) / 2
     EG = (-260, -40, 330)
-    gb = _box(gcx, 60, gmz, gx, gy, gzz)
+    gb = _box(gm[0], ymc, gm[1], gx, iy0 - gy0, gzz)
     gb = _fillet_try(gb, gb.edges(), [8.0, 6.0, 4.0])
     for k in range(4):
-        gb += _box(-gx + 2 - 1.5, 30 + 20 * k, gmz, 3, 3, gzz - 24)           # cast fins on the back
+        gb += _box(gm[0] - gx / 2 - 1.5, gy0 + 18 + 18 * k, gm[1], 3, 3, gzz - 24)   # cast fins on the stair side
     add("Worm gearbox housing (cast aluminium)", gb, C_ALU, "metal", 4, "internal", EG)
+    osh = _ycyl(gm[0], (iy0 + P["sprocket_y"] + 8) / 2, gm[1], 10, P["sprocket_y"] + 8 - iy0)
+    add("Gearmotor output shaft", osh, C_STEEL, "metal", 4, "internal", EG)
     mr, ml = P["motor_r"], P["motor_l"]
-    can = _ycyl(gcx, -40 + 10, gmz, mr, ml - 20)                                # y -95 .. 35
+    zb = gm[1] + gzz / 2
+    can = _zcyl(P["motor_x"], ymc, zb + (ml - 30) / 2, mr, ml - 30)
     can = _fillet_try(can, _circle_edges(can, mr), [3.0, 2.0])
     add("Gearmotor can, 24 V", can, C_BLACK, "painted", 4, "internal", EG)
-    brk = _ycyl(gcx, -40 - ml / 2 + 10, gmz, mr + 1, 20)                        # y -115 .. -95
-    brk = _fillet_try(brk, _faces_edges(brk, Axis.Y, 0), [6.0, 4.0, 2.0])
+    brk = _zcyl(P["motor_x"], ymc, zb + ml - 15, mr + 1, 30)
+    brk = _fillet_try(brk, _faces_edges(brk, Axis.Z, -1), [6.0, 4.0, 2.0])
     add("Spring-applied brake housing", brk, C_ALU, "metal", 4, "internal", EG)
-    lev = _box(gcx - mr - 6, -105, gmz + 20, 10, 8, 60)
+    lev = _box(P["motor_x"] - mr - 6, ymc, zb + ml - 20, 10, 8, 50)
     lev = _fillet_try(lev, lev.edges(), [2.5, 1.5])
     add("Brake release lever", lev, C_ACCENT, "plastic", 4, "internal", EG)
-    band = _ycyl(gcx, -45, gmz, mr + 0.4, 36) - _ycyl(gcx, -45, gmz, mr - 1, 40)
-    band &= _box(gcx - mr, -45, gmz, mr * 1.4, 40, mr * 2 + 2)
+    band = _zcyl(P["motor_x"], ymc, zb + 60, mr + 0.4, 36) - _zcyl(P["motor_x"], ymc, zb + 60, mr - 1, 40)
+    band &= _box(P["motor_x"] - mr, ymc, zb + 60, mr * 1.4, mr * 2 + 2, 40)
     add("Gearmotor rating label", band, C_LABEL, "paper", 4, "internal", EG)
-    glm = _zcyl(gcx - 10, 0, gmz + mr + 3, 7, 8)
+    glm = _xcyl(P["motor_x"] + mr + 4, ymc, zb + 90, 7, 8)
     add("Gearmotor cable gland", glm, C_DARK, "plastic", 8, "internal", EG)
-    gbr = _box(5, 60, gmz + 20, 6, 100, 140)
-    gbr += _box(21, 60, Z0 + 380 - 11 - 3, 38, 100, 6)
-    gbr = _fillet_try(gbr, gbr.edges().filter_by(Axis.X), [4.0, 2.0])
-    add("Gearmotor mounting bracket", gbr, C_FRAME, "painted", 1, "internal", (-120, 0, 0))
+    add("Gearmotor screws (3 x M8)", MC["gm_bolts"].shape, C_STEEL, "metal", 17, "internal", EG)
+    gmz = gm[1]
 
     # ============================================================ 2 tri-star clusters (not tilted)
     a, wr, ww = P["arm"], P["wheel_r"], P["wheel_w"]
@@ -438,7 +392,7 @@ def product_parts(P=PARAMS):
     base_o = _fillet_try(base_o, base_o.edges().filter_by(Axis.X), [8.0, 6.0, 4.0])
     base_o = _fillet_try(base_o, _faces_edges(base_o, Axis.X, -1), [2.0, 1.0])
     base = base_o - _box((x0e + 6 + x1e) / 2 - wall, 0, ezc, x1e - x0e - 6, ey - 2 * wall, ez - 2 * wall)
-    add("Electronics enclosure base (IP54)", base, C_SHELL, "plastic", 13, "shell", (-200, 0, 400))
+    add("Electronics enclosure base (IP54)", base, C_SHELL, "plastic", 13, "shell", (-200, 0, 400), shift=(35, 0, 0))
     lid_o = _box(x0e + 3, 0, ezc, 6, ey, ez)
     lid_o = _fillet_try(lid_o, lid_o.edges().filter_by(Axis.X), [8.0, 6.0, 4.0])
     lid_o = _fillet_try(lid_o, _faces_edges(lid_o, Axis.X, 0), [2.0, 1.0])
@@ -446,9 +400,9 @@ def product_parts(P=PARAMS):
     lid = lid_o - _box(x0e + 3, (wy0 + wy1) / 2, ezc, 10, wy1 - wy0, ez - 28)
     for k in range(7):                                                          # driver side cooling ribs
         lid += _box(x0e - 0.8, -150 + 14 * k + 20, ezc - 6, 1.6, 5, ez - 44)
-    add("Electronics enclosure lid", lid, C_DARK, "plastic", 13, "shell", (-400, 0, 400))
+    add("Electronics enclosure lid", lid, C_DARK, "plastic", 13, "shell", (-400, 0, 400), shift=(35, 0, 0))
     pane = _box(x0e + 3, (wy0 + wy1) / 2, ezc, 2.0, wy1 - wy0 + 4, ez - 24)
-    add("Enclosure window (clear polycarbonate)", pane, C_WINDOW, "clear", 13, "shell", (-400, 0, 400))
+    add("Enclosure window (clear polycarbonate)", pane, C_WINDOW, "clear", 13, "shell", (-400, 0, 400), shift=(35, 0, 0))
     ls = []
     for yy in (-ey / 2 + 9, 0.0, ey / 2 - 9):
         for zz in (-ez / 2 + 9, ez / 2 - 9):
@@ -457,28 +411,26 @@ def product_parts(P=PARAMS):
             s_ = _xcyl(x0e - 0.6, yy, ezc + zz, 3.2, 1.2)
             s_ -= _box(x0e - 1.2, yy, ezc + zz, 1.0, 3.8, 0.8)
             ls.append(s_)
-    add("Enclosure lid screws", _union(ls), C_STEEL, "metal", 13, "shell", (-450, 0, 400))
+    add("Enclosure lid screws", _union(ls), C_STEEL, "metal", 13, "shell", (-450, 0, 400), shift=(35, 0, 0))
     npl = _box(x0e - 0.25, -85, ezc + ez / 2 - 12, 0.5, 90, 8)
-    add("Enclosure name plate", npl, C_ACCENT, "painted", 13, "shell", (-400, 0, 400))
-    so = _union([_xcyl((x1e + 26) / 2, yy, ezc + zz, 5, 26 - x1e) for yy in (-130, 130) for zz in (-35, 35)])
-    add("Enclosure standoffs", so, C_STEEL, "metal", 13, "shell", (-100, 0, 400))
+    add("Enclosure name plate", npl, C_ACCENT, "painted", 13, "shell", (-400, 0, 400), shift=(35, 0, 0))
 
     EBD = (-300, 0, 400)
     pcb_c = _box(-18, (wy0 + wy1) / 2, ezc, 1.6, wy1 - wy0 + 6, ez - 20)
-    add("Controller board with IMU", pcb_c, C_PCB, "plastic", 6, "shell", EBD)
+    add("Controller board with IMU", pcb_c, C_PCB, "plastic", 6, "shell", EBD, shift=(35, 0, 0))
     comp_c = (_box(-22, 55, ezc + 18, 6, 36, 30) + _box(-21, 115, ezc + 20, 4, 14, 14)
               + _box(-21, 115, ezc - 20, 4, 30, 10) + _box(-23, 60, ezc - 28, 8, 60, 12))
-    add("Controller microcontroller and IMU", comp_c, C_CHIP, "plastic", 6, "shell", EBD)
+    add("Controller microcontroller and IMU", comp_c, C_CHIP, "plastic", 6, "shell", EBD, shift=(35, 0, 0))
     led_c = _box(-19.4, 140, ezc + 30, 1.2, 4, 4)
-    add("Controller heartbeat light (lit)", led_c, C_LED_G, "emissive", 6, "shell", EBD)
+    add("Controller heartbeat light (lit)", led_c, C_LED_G, "emissive", 6, "shell", EBD, shift=(35, 0, 0))
     pcb_d = _box(-18, -(wy0 + wy1) / 2, ezc, 1.6, wy1 - wy0 + 6, ez - 20)
-    add("Motor driver board", pcb_d, C_PCB, "plastic", 5, "shell", EBD)
+    add("Motor driver board", pcb_d, C_PCB, "plastic", 5, "shell", EBD, shift=(35, 0, 0))
     hs = _box(-26, -90, ezc, 14, 80, 60)
     for k in range(8):
         hs -= _box(-31, -90 - 35 + 10 * k, ezc, 8, 4, 64)
-    add("Motor driver heat sink", hs, C_ALU, "metal", 5, "shell", EBD)
+    add("Motor driver heat sink", hs, C_ALU, "metal", 5, "shell", EBD, shift=(35, 0, 0))
     caps_d = _xcyl(-26, -150, ezc + 25, 7, 14) + _xcyl(-26, -150, ezc - 5, 7, 14) + _box(-22, -30, ezc - 30, 6, 20, 16)
-    add("Motor driver capacitors and terminals", caps_d, C_CHIP, "plastic", 5, "shell", EBD)
+    add("Motor driver capacitors and terminals", caps_d, C_CHIP, "plastic", 5, "shell", EBD, shift=(35, 0, 0))
 
     # ============================================================ 7 battery pack and cradle
     px, py, pz = P["pack"]
@@ -487,14 +439,14 @@ def product_parts(P=PARAMS):
     pk = _box(pcx, 0, pcz, px, py, pz)
     pk = _fillet_try(pk, pk.edges(), [8.0, 6.0, 4.0])
     pk -= _box(pcx, 0, pcz + pz / 2 - 30, px + 2, py + 2, 1.0) - _box(pcx, 0, pcz + pz / 2 - 30, px - 1.4, py - 1.4, 2)
-    add("Battery pack housing, 24 V LiFePO4", pk, C_PACK, "plastic", 7, "shell", EP)
+    add("Battery pack housing, 24 V LiFePO4", pk, C_PACK, "plastic", 7, "shell", EP, shift=(28, 0, 0))
     lat = _box(pcx, 0, pcz + pz / 2 + 4, 40, 70, 10)
     lat = _fillet_try(lat, lat.edges(), [4.0, 3.0, 2.0])
-    add("Pack release latch", lat, C_ACCENT, "plastic", 7, "shell", EP)
+    add("Pack release latch", lat, C_ACCENT, "plastic", 7, "shell", EP, shift=(28, 0, 0))
     xf = pcx - px / 2
     lb = _box(xf - 1, 50, pcz + 50, 2, 44, 10)
     lb = _fillet_try(lb, lb.edges().filter_by(Axis.X), [2.0, 1.0])
-    add("State-of-charge light housing", lb, C_BLACK, "plastic", 7, "shell", EP)
+    add("State-of-charge light housing", lb, C_BLACK, "plastic", 7, "shell", EP, shift=(28, 0, 0))
     for k in range(4):
         seg = _box(xf - 2.3, 50 - 15 + 10 * k, pcz + 50, 0.8, 7, 5)
         lit = k < 3
@@ -502,39 +454,28 @@ def product_parts(P=PARAMS):
             "emissive" if lit else "plastic", 7, "shell", EP)
     port = _xcyl(xf - 3, -50, pcz + 45, 10, 6)
     port = _fillet_try(port, _circle_edges(port, 10), [2.0, 1.0])
-    add("Charge port cap", port, C_BLACK, "rubber", 7, "shell", EP)
+    add("Charge port cap", port, C_BLACK, "rubber", 7, "shell", EP, shift=(28, 0, 0))
     lab = _box(xf - 0.25, 0, pcz - 25, 0.5, 130, 44)
-    add("Pack rating label", lab, C_LABEL, "paper", 7, "shell", EP)
+    add("Pack rating label", lab, C_LABEL, "paper", 7, "shell", EP, shift=(28, 0, 0))
     wm = _text_plate("StepClimber", 15, (xf - 0.5, 0, pcz - 16), (0, -1, 0), (-1, 0, 0), h=0.4)
-    add("Pack wordmark", wm, C_ACCENT, "painted", 7, "shell", EP)
+    add("Pack wordmark", wm, C_ACCENT, "painted", 7, "shell", EP, shift=(28, 0, 0))
     ink = _box(xf - 0.6, 0, pcz - 34, 0.3, 100, 3) + _box(xf - 0.6, -20, pcz - 41, 0.3, 60, 3)
-    add("Pack label print", ink, C_DARK, "paper", 7, "shell", EP)
-    cz0 = pcz - pz / 2
-    cr_ = _box(pcx + 9, 0, cz0 - 2, px + 30, py + 12, 4)
-    for s in (-1, 1):
-        cr_ += _box(pcx + 9, s * (py / 2 + 4), cz0 + 20, px + 30, 4, 44)
-    cr_ += _box(22, 0, pcz - 20, 8, py + 12, pz)
-    cr_ = _fillet_try(cr_, cr_.edges().filter_by(Axis.Y), [3.0, 1.5])
-    add("Pack quick-release cradle", cr_, C_FRAME, "painted", 7, "shell", (-120, 0, 400))
+    add("Pack label print", ink, C_DARK, "paper", 7, "shell", EP, shift=(28, 0, 0))
+    add("Pack quick-release cradle", MC["cradle"].shape, C_FRAME, "painted", 7, "shell", (-120, 0, 400))
 
     # ============================================================ 8 switch, fuse and harness
     kb = _box(-35, 150, Z0 + P["pack_z"] - 100, 40, 40, 40)
     kb = _fillet_try(kb, kb.edges(), [5.0, 3.0])
-    add("Key switch and fuse holder", kb, C_DARK, "plastic", 8, "shell", (-150, 0, 0))
+    add("Key switch and fuse holder", kb, C_DARK, "plastic", 8, "shell", (-150, 0, 0), shift=(38, -30, -40))
     ks = _xcyl(-57, 150, Z0 + P["pack_z"] - 92, 9, 4) + _xcyl(-60, 150, Z0 + P["pack_z"] - 92, 3, 4)
     ks += _box(-64, 150, Z0 + P["pack_z"] - 92, 6, 3, 14)
-    add("Key switch and key", ks, C_STEEL, "metal", 8, "shell", (-150, 0, 0))
+    add("Key switch and key", ks, C_STEEL, "metal", 8, "shell", (-150, 0, 0), shift=(38, -30, -40))
     fc = _xcyl(-57, 150, Z0 + P["pack_z"] - 112, 6, 5)
-    add("Fuse holder cap (40 A)", fc, "#B91C1C", "plastic", 8, "shell", (-150, 0, 0))
-    pz_bot = Z0 + P["pack_z"] - pz / 2
-    cab = _pipe([(-30, -20, pz_bot - 4), (-30, -20, ezc + ez / 2 + 12)], 5)
-    cab += _pipe([(-30, -60, ezc - ez / 2 - 12), (-30, -60, gmz + 52), (gcx - 10, 0, gmz + mr + 8)], 5)
-    cab += _pipe([(-30, 150, ezc + ez / 2 + 12), (-30, 150, pz_bot - 60), (-15, 150, Z0 + P["pack_z"] - 120),
-                  (-15, 150, ztop - 60), (hx - 22, 150, gz - 40), (hx - 22, 50, gz - 40)], 4)
-    add("Wiring harness cables", cab, C_BLACK, "rubber", 8, "shell")
+    add("Fuse holder cap (40 A)", fc, "#B91C1C", "plastic", 8, "shell", (-150, 0, 0), shift=(38, -30, -40))
+    add("Wiring harness cables", MC["harness"].shape, C_BLACK, "rubber", 8, "shell")
     gl = _union([_zcyl(-30, y, ezc + sz * (ez / 2 + 4), 7, 8) + _zcyl(-30, y, ezc + sz * (ez / 2 + 1), 9, 2)
                  for y, sz in ((-20, 1), (150, 1), (-60, -1))])
-    add("Enclosure cable glands", gl, C_DARK, "plastic", 13, "shell", (-200, 0, 400))
+    add("Enclosure cable glands", gl, C_DARK, "plastic", 13, "shell", (-200, 0, 400), shift=(35, 0, 0))
 
     # ============================================================ 9 handle controls
     grip = _rod((hx, -150, gz), (hx, 150, gz), P["grip_r"])
@@ -569,19 +510,15 @@ def product_parts(P=PARAMS):
     # ============================================================ 11 nosing guard skids
     z0s, z1s = P["skid_z"]
     sx = P["skid_x"]
-    skids, sscr, sbr = [], [], []
+    skids, sscr = [], []
     for s in (-1, 1):
-        sk_ = _box(sx + 5, s * 150, Z0 + (z0s + z1s) / 2, 10, 25, z1s - z0s)
+        sk_ = _box(sx + 5, s * P["skid_y"], Z0 + (z0s + z1s) / 2, 10, 25, z1s - z0s)
         sk_ = _fillet_try(sk_, sk_.edges(), [4.0, 3.0, 1.5])
         skids.append(sk_)
-        for k in range(6):
-            zz = Z0 + z0s + 40 + (z1s - z0s - 80) * k / 5
-            sscr.append(_xcyl(sx - 0.4, s * 150, zz, 3.4, 0.8))
-        sbr.append(_pipe([(sx + 8, s * 150, Z0 + z0s), (rx, s * ry, Z0 - 40)], 6))
-        sbr.append(_pipe([(sx + 8, s * 150, Z0 + z1s), (rx, s * ry, Z0 + z1s + 60)], 6))
+        for zz in P["standoff_z"]:
+            sscr.append(_xcyl(sx - 0.4, s * P["skid_y"], Z0 + zz, 3.0, 0.8))
     add("Nosing guard skids (UHMW)", _union(skids), C_UHMW, "plastic", 11, "shell", (-120, 0, 0))
-    add("Skid screws", _union(sscr), C_STEEL, "metal", 13, "shell", (-140, 0, 0))
-    add("Skid brackets", _union(sbr), C_FRAME, "painted", 11, "shell", (-50, 0, 0))
+    add("Skid screws", _union(sscr), C_STEEL, "metal", 17, "shell", (-140, 0, 0))
 
     # ============================================================ context cartons (ride on the toe plate)
     cb = plate_top + 1.5

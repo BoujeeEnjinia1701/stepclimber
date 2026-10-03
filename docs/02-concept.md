@@ -3,7 +3,7 @@ doc_id: SCM-PRC-001
 title: StepClimber design precis
 project: StepClimber
 doc_type: Design precis
-version: "0.6"
+version: "0.7"
 status: Draft
 date: '2026-10-02'
 author: Amish Chadha
@@ -28,16 +28,20 @@ revisions:
 - version: "0.5"
   date: '2026-10-01'
   author: Amish Chadha
-  change: Constructable design (SCM-DDR-003); figures from SCM-CAL-001 v0.3; budget reported as a value-engineering target; media regenerated
+  change: Constructable design (SCM-DDR-003); figures from SCM-CAL-001 v0.5; budget reported as a value-engineering target; media regenerated
 - version: "0.6"
   date: '2026-10-02'
   author: Amish Chadha
   change: 'Decisions of 2026-10-02 carried in (SCM-DEC-001 items 1 to 4, 6 and 7): 4140 cluster shaft, R5 35 kg and R3 16 steps/min for the first prototype, plus or minus 3 degree tilt window, first user group and pilot partner'
+- version: "0.7"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: 'Figures from SCM-CAL-001 v0.5 (recalculated at 16 steps/min, 35 kg and the plus or minus 3 degree window; 4140 shaft with fatigue assessed; cost USD 788); concept media regenerated; appearance model brought to the constructable design'
 ---
 
 # StepClimber design precis
 
-StepClimber is a steel hand truck whose two wheels are replaced by a pair of powered tri-star clusters on one shaft. A 24 V worm gearmotor with a built-in brake turns the clusters, through a two-stage chain drive, one third of a turn per step, lifting 60 kg of parcels up a residential stair while the courier walks ahead and steadies the handle. An IMU on the frame watches the tilt angle, shapes the motor speed so the courier can hold the load near its balance point, and stops the climb if the angle drifts. This version carries the cluster and drive rework and the tighter tilt window Amish decided on 2026-09-25 (SCM-DDR-002), in which 200 mm wheels on 150 mm arms keep every steel part clear of stair nosings, and the constructable design of SCM-DDR-003 (2026-10-01), in which every part is fixed to its neighbours: bearings on axle plates welded inside the rails, a closed chain case, a countershaft in two bearings and the electronics on uprights. The calculations (SCM-CAL-001 v0.3) give about 1,215 loaded steps per charge from a 256 Wh LiFePO4 pack and a 34.2 kg truck. **Three requirements that were not met on paper are met after Amish's decisions of 2026-10-02** (SCM-DEC-001): R5 is set to 35 kg for the first prototype (34.2 kg), R3 to 16 steps/min (the 250 W motor climbs at 16.3), and the tilt window to plus or minus 3 degrees for the first loaded trials, which keeps the grip force at 100 N or less (R6). Value-engineering target: USD 650. Estimated cost of the constructable design: USD 776 (USD 126 over the target). The prototype build plan is SCM-BLD-001 ([docs/05-build-plan.md](05-build-plan.md)).
+StepClimber is a steel hand truck whose two wheels are replaced by a pair of powered tri-star clusters on one shaft. A 24 V worm gearmotor with a built-in brake turns the clusters, through a two-stage chain drive, one third of a turn per step, lifting 60 kg of parcels up a residential stair while the courier walks ahead and steadies the handle. An IMU on the frame watches the tilt angle, shapes the motor speed so the courier can hold the load near its balance point, and stops the climb if the angle drifts. This version carries the cluster and drive rework and the tighter tilt window Amish decided on 2026-09-25 (SCM-DDR-002), in which 200 mm wheels on 150 mm arms keep every steel part clear of stair nosings, and the constructable design of SCM-DDR-003 (2026-10-01), in which every part is fixed to its neighbours: bearings on axle plates welded inside the rails, a closed chain case, a countershaft in two bearings and the electronics on uprights. The calculations (SCM-CAL-001 v0.5) give about 1,215 loaded steps per charge from a 256 Wh LiFePO4 pack and a 34.2 kg truck. **Three requirements that were not met on paper are met after Amish's decisions of 2026-10-02** (SCM-DEC-001): R5 is set to 35 kg for the first prototype (34.2 kg), R3 to 16 steps/min (the 250 W motor climbs at 16.3), and the tilt window to plus or minus 3 degrees for the first loaded trials, which keeps the grip force at 100 N or less (R6). Value-engineering target: USD 650. Estimated cost of the constructable design: USD 776 (USD 126 over the target). The prototype build plan is SCM-BLD-001 ([docs/05-build-plan.md](05-build-plan.md)).
 
 ![Hero render](../media/hero.png)
 
@@ -56,7 +60,7 @@ Tilt control keeps the operator in the loop. The truck has only the clusters on 
 
 ![Energy flow](../media/flow.png)
 
-*Figure 2. Energy for one loaded step up, in joules per step, from the pack to the lift at the clusters. Design load case of 94 kg total on a 196 mm riser. Values from SCM-CAL-001 v0.3 (calculated, not measured).*
+*Figure 2. Energy for one loaded step up, in joules per step, from the pack to the lift at the clusters. Design load case of 94 kg total on a 196 mm riser. Values from SCM-CAL-001 v0.5 (calculated, not measured).*
 
 ## Main components
 
@@ -87,7 +91,7 @@ Numbers match the exploded view (Figure 3) and `bom/bom.csv`.
 
 ## Key numbers
 
-All values are from SCM-CAL-001 v0.3, printed by `docs/04-calcs/sizing.py`. They are paper calculations, not measurements. The design load case is a 60 kg payload on a 34.2 kg truck (94.2 kg total) on a stair with 196 mm risers and 254 mm treads. The clusters are assumed to carry the whole weight while lifting, which is conservative.
+All values are from SCM-CAL-001 v0.5, printed by `docs/04-calcs/sizing.py`. They are paper calculations, not measurements. The design load case is a 60 kg payload on a 34.2 kg truck (94.2 kg total) on a stair with 196 mm risers and 254 mm treads. The clusters are assumed to carry the whole weight while lifting, which is conservative.
 
 ### Cluster geometry and nosing clearance
 
@@ -117,7 +121,7 @@ The nosing passes through the gap between the two lower arms, close to the shaft
 
 ### Drive, speed and torque
 
-Assumptions: 17 steps per minute, so one third of a turn every 3.5 s (5.67 rpm, 0.593 rad/s at the shaft); drive efficiencies as in SCM-REQ-001.
+Assumptions: 16 steps per minute, so one third of a turn every 3.75 s (5.33 rpm, 0.559 rad/s at the shaft); drive efficiencies as in SCM-REQ-001.
 
 *Table 3. Drive.*
 
@@ -125,12 +129,12 @@ Assumptions: 17 steps per minute, so one third of a turn every 3.5 s (5.67 rpm, 
 | --- | --- | --- | --- |
 | Lift work per step | 181 J | 94.2 kg x 9.81 m/s² x 0.196 m | |
 | Mean shaft torque | 86 N·m | 181 J / 2.09 rad | |
-| Peak shaft torque | 140 N·m static, 182 N·m with a 1.3 factor | Full load on the 150 mm arm, plus the grip force | |
-| Peak shaft power | 108 W | 182 N·m x 0.593 rad/s | |
-| Peak motor output | 260 W | 108 W / (0.95 x 0.97 chain stages x 0.45 worm) | 4 % over a 250 W motor at 17 steps/min; the motor gives 16.3 steps/min, so R3 (16 steps/min for the first prototype, set 2026-10-02) is met |
-| Gearmotor output | 28.2 N·m at 40 rpm | 182 N·m / (7 x 0.95 x 0.97) | Inside a 30 N·m rating |
-| Final stage (08B, 10T to 20T, 38 links) chain pull | 4,478 N | Safety factor 4.0 | |
-| First stage (06B, 10T to 35T, 54 links) chain pull | 1,764 N | Safety factor 5.0 | |
+| Peak shaft torque | 139 N·m static, 181 N·m with a 1.3 factor | Full load on the 150 mm arm, plus the grip force | |
+| Peak shaft power | 101 W | 181 N·m x 0.559 rad/s | |
+| Peak motor output | 244 W | 101 W / (0.95 x 0.97 chain stages x 0.45 worm) | 2 % under a 250 W motor at 16 steps/min; the motor gives at most 16.4 steps/min, so R3 (16 steps/min for the first prototype, set 2026-10-02) is met (17 steps/min would need 260 W) |
+| Gearmotor output | 28.1 N·m at 37 rpm | 181 N·m / (7 x 0.95 x 0.97) | Inside a 30 N·m rating |
+| Final stage (08B, 10T to 20T, 38 links) chain pull | 4,465 N | Safety factor 4.0 | |
+| First stage (06B, 10T to 35T, 54 links) chain pull | 1,759 N | Safety factor 5.1 | |
 
 R3 was revised to 17 steps per minute on 2026-09-25 to keep the 250 W wheelchair motor; the heavier constructable truck needs slightly more than that motor gives, so Amish set R3 to 16 steps per minute for the first prototype on 2026-10-02 (SCM-DEC-001, item 3). The controller sets the speed, so a faster motor can follow later.
 
@@ -151,14 +155,14 @@ The self-locking worm wastes more than half the drive energy (Figure 2). It is k
 
 ### Balance, handle force and rolling
 
-During a step the support point moves under the hub: the hub goes from 29 mm on the stair side of the support wheel to 150 mm beyond it. With the frame angle held, the center of mass swings plus or minus 89 mm about the support point even at the best set angle, and a further 52 mm at the edge of the plus or minus 6 degree window.
+During a step the support point moves under the hub: the hub goes from 29 mm on the stair side of the support wheel to 150 mm beyond it. With the frame angle held, the center of mass swings plus or minus 89 mm about the support point even at the best set angle, and a further 26 mm at the edge of the plus or minus 3 degree window.
 
 *Table 5. Handle force.*
 
 | Quantity | Value | Requirement |
 | --- | --- | --- |
 | Grip force at the set angle, worst point of a step | 76 N | |
-| Grip force at a plus or minus 6 degree window edge | 121 N | Over R6 |
+| Grip force at a plus or minus 3 degree window edge | 99 N | R6 met (121 N at a plus or minus 6 degree edge) |
 | Widest window that keeps the grip force at 100 N | Plus or minus 3.1 degrees | R6 met with the plus or minus 3 degree window set for the first loaded trials (SCM-DEC-001, item 4) |
 | Push force on the flat | 28 N | R10 met |
 
@@ -166,7 +170,7 @@ The longer arm that fixes the nosing clearance also widens the swing of the load
 
 ### Structure
 
-At the 182 N·m peak and a 3 g dropped-step load, the safety factors on yield are 1.4 for the keyed 25 mm shaft in 1018 (Amish decided on 2026-10-02 to make it from a quenched and tempered alloy steel such as 4140, which raises this factor; to be recalculated) (its bearings now sit inside the frame, 93 mm from the wheel plane), 1.5 for the 6 mm spider arms and 2.6 for the 28 mm frame rails (R1 met statically; fatigue not assessed).
+At the 181 N·m peak and a 3 g dropped-step load, the safety factors on yield are 2.5 for the keyed 25 mm shaft in 4140 quenched and tempered steel (it was 1.4 in 1018 before Amish decided on 2026-10-02 to change the material; its bearings sit inside the frame, 93 mm from the wheel plane), 1.5 for the 6 mm spider arms and 3.2 for the 28 mm frame rails (R1 met statically). The shaft has a fatigue safety factor of 1.8 on paper; fatigue of the welded frame is not assessed.
 
 ### Mass and size
 
@@ -181,7 +185,7 @@ At the 182 N·m peak and a 3 g dropped-step load, the safety factors on yield ar
 
 ### Cost
 
-Value-engineering target: USD 650. Estimated cost of the constructable design: USD 776 including the charger (USD 126 over the target). See `bom/bom.csv` and the value-engineering section of the design decisions register ([docs/06-design-decisions.md](06-design-decisions.md)).
+Value-engineering target: USD 650. Estimated cost of the constructable design: USD 788 including the charger (USD 138 over the target). See `bom/bom.csv` and the value-engineering section of the design decisions register ([docs/06-design-decisions.md](06-design-decisions.md)).
 
 ## Key design choices
 
@@ -204,7 +208,7 @@ Items marked **decided** were decided by Amish on 2026-09-25 (SCM-DDR-001 and SC
 
 > **Safety:** StepClimber moves an 86 kg mass on a stair with a person directly uphill of it, has a pinch-prone chain and rotating clusters, and carries a 256 Wh lithium iron phosphate pack. A fall of the loaded truck down a stair could crush or seriously injure the operator or anyone below. Treat every item here as a hazard to design out before any loaded climb.
 
-- **Cluster shaft.** The 25 mm shaft carries the whole load at a dropped step; its 1.4 factor was found on 1018 with fatigue not assessed, so it is made from quenched and tempered alloy steel such as 4140 (SCM-DEC-001, item 1), and fatigue must be assessed before any loaded stair trial.
+- **Cluster shaft.** The 25 mm shaft carries the whole load at a dropped step; its 1.4 factor on 1018 steel led to a choice of quenched and tempered alloy steel such as 4140 (SCM-DEC-001, item 1), which gives 2.5 at a 3 g dropped step and a fatigue factor of 1.8 on paper (SCM-CAL-001 v0.5, section 8). The tensile strength is to be confirmed from the mill certificate, and a fatigue test at TRL 4 should come before any loaded stair trial.
 - **Runaway and tip-over on the stair.** The main hazard. Two independent holds (self-locking worm and spring-applied brake), hold-to-run control, the tilt window and a rated load label are all required. Nobody may stand downhill of the truck on the stair. The frame must not be able to pass over center toward the operator if the grip is released: the tilt limits of 15 and 45 degrees protect against this only if the brake holds, which is unverified.
 - **Operator falls.** The courier walks backwards up the stair. Speed is limited to about 16 steps per minute and stops the moment the grip opens. The handle should leave one hand free for a stair rail where possible; this is an open question.
 - **Pinch and entanglement.** The clusters rotate with up to about 182 N·m and the chain runs near the operator's feet. The chains and sprockets are enclosed in a closed chain case; the cluster spiders have no open gaps large enough for fingers when the truck is at rest; clothing and straps must be kept clear.
@@ -222,4 +226,4 @@ Open decisions are indexed in the design decisions register ([docs/06-design-dec
 - Assess fatigue of the keyed shaft and the welded frame.
 - First user group and partner: decided by Amish on 2026-10-02 (SCM-DEC-001, items 6 and 7): parcel couriers serving walk-up apartment buildings first, then gig couriers; a regional parcel or last-mile delivery company for a small supervised pilot, chosen from the interviews.
 
-Concept media: [blueprint sheet](../media/concept-blueprint.pdf), [interactive 3D model](../media/viewer.html). General arrangement: [SCM-DWG-001 Rev P4](../cad/drawings/SCM-DWG-001.pdf). Prototype build plan: [SCM-BLD-001](05-build-plan.md).
+Concept media: [blueprint sheet](../media/concept-blueprint.pdf), [interactive 3D model](../media/viewer.html). General arrangement: [SCM-DWG-001 Rev P5](../cad/drawings/SCM-DWG-001.pdf). Prototype build plan: [SCM-BLD-001](05-build-plan.md).
